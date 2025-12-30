@@ -6,7 +6,7 @@
 import { initStrudel, evaluate, hush, samples } from '@strudel/web';
 import {
   getAudioContext as getSuperdoughContext,
-  getAnalyzerById,
+  analysers,
 } from 'superdough';
 
 let initialized = false;
@@ -121,8 +121,8 @@ export function stop() {
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
-  // Get the analyser from superdough
-  const analyser = getAnalyzerById(ANALYZER_ID);
+  // Get the analyser from superdough's analysers map
+  const analyser = analysers[ANALYZER_ID];
 
   // Debug: periodically check if we're getting data
   if (analyser && Math.random() < 0.005) {
