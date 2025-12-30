@@ -7,8 +7,9 @@
 
 import { repl, controls } from '@strudel/core';
 import { mini } from '@strudel/mini';
-import { webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
-import { registerSynthSounds, registerZZFXSounds } from '@strudel/webaudio';
+import { webaudioOutput, initAudioOnFirstClick, registerSynthSounds, samples } from '@strudel/webaudio';
+import '@strudel/tonal';
+import '@strudel/soundfonts';
 
 // DOM elements
 const codeDisplay = document.getElementById('code');
@@ -35,9 +36,23 @@ async function initStrudel() {
       onEvalError: (err) => showError(err),
     });
 
-    // Register built-in sounds
+    // Register built-in synth sounds
     await registerSynthSounds();
 
+    // Load drum machine samples from Strudel CDN
+    await samples({
+      bd: 'https://strudel.cc/samples/tidal/bd.wav',
+      sd: 'https://strudel.cc/samples/tidal/sd.wav',
+      hh: 'https://strudel.cc/samples/tidal/hh.wav',
+      oh: 'https://strudel.cc/samples/tidal/oh.wav',
+      cp: 'https://strudel.cc/samples/tidal/cp.wav',
+      ride: 'https://strudel.cc/samples/tidal/ride.wav',
+    });
+
+    // Load TR909 bank
+    await samples('github:tidalcycles/Dirt-Samples/master');
+
+    updateStatus('Ready', false);
     return evaluate;
   } catch (err) {
     showError(err);
