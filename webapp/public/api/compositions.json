@@ -1,5 +1,55 @@
 [
   {
+    "id": "autumn_amber_descent",
+    "name": "Autumn: Amber Descent",
+    "file": "/compositions/autumn_amber_descent.js",
+    "source": "local",
+    "bpm": 85,
+    "key": null,
+    "modifiedAt": "2025-12-30T06:00:54.301Z",
+    "size": 1653
+  },
+  {
+    "id": "aether_cosmic_interlude",
+    "name": "Aether: The Cosmic Interlude",
+    "file": "/compositions/aether_cosmic_interlude.js",
+    "source": "local",
+    "bpm": 93,
+    "key": null,
+    "modifiedAt": "2025-12-30T05:48:37.050Z",
+    "size": 2180
+  },
+  {
+    "id": "winter_crystalline_silence",
+    "name": "Winter: Crystalline Silence",
+    "file": "/compositions/winter_crystalline_silence.js",
+    "source": "local",
+    "bpm": 55,
+    "key": null,
+    "modifiedAt": "2025-12-30T05:48:12.793Z",
+    "size": 1668
+  },
+  {
+    "id": "summer_solstice_heat",
+    "name": "Summer: Solstice Heat",
+    "file": "/compositions/summer_solstice_heat.js",
+    "source": "local",
+    "bpm": 126,
+    "key": null,
+    "modifiedAt": "2025-12-30T05:47:35.037Z",
+    "size": 1252
+  },
+  {
+    "id": "spring_vernal_awakening",
+    "name": "Spring: Vernal Awakening",
+    "file": "/compositions/spring_vernal_awakening.js",
+    "source": "local",
+    "bpm": 72,
+    "key": null,
+    "modifiedAt": "2025-12-30T05:47:17.989Z",
+    "size": 1230
+  },
+  {
     "id": "current copy",
     "name": "Basic 4-bar beat pattern",
     "file": "/compositions/current copy.js",

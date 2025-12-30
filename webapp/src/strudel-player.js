@@ -4,11 +4,17 @@
  */
 
 import { initStrudel, evaluate, hush } from '@strudel/web';
+import {
+  getAudioContext as getSuperdoughContext,
+  analysers,
+  getAnalyserById,
+} from 'superdough';
 
 let initialized = false;
-let audioContext = null;
-let analyser = null;
-let waveformAnalyser = null;
+
+// Analyser IDs used by our visualizations
+const SPECTRUM_ANALYSER_ID = 1;
+const WAVEFORM_ANALYSER_ID = 2;
 
 /**
  * Initialize Strudel and audio analysis
@@ -16,23 +22,39 @@ let waveformAnalyser = null;
 export async function init() {
   if (initialized) return;
 
-  // Initialize Strudel
+  // Initialize Strudel (this also initializes superdough's AudioContext)
   await initStrudel();
 
-  // Get or create audio context
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-  // Create analyser for frequency spectrum
-  analyser = audioContext.createAnalyser();
-  analyser.fftSize = 2048;
-  analyser.smoothingTimeConstant = 0.8;
-
-  // Create analyser for waveform
-  waveformAnalyser = audioContext.createAnalyser();
-  waveformAnalyser.fftSize = 512;
-  waveformAnalyser.smoothingTimeConstant = 0.5;
+  // Pre-create analysers with appropriate settings
+  // Spectrum analyser: higher FFT for frequency resolution
+  getAnalyserById(SPECTRUM_ANALYSER_ID, 2048, 0.8);
+  // Waveform analyser: lower FFT for time resolution
+  getAnalyserById(WAVEFORM_ANALYSER_ID, 512, 0.5);
 
   initialized = true;
+}
+
+/**
+ * Wrap pattern code to include analyse for visualization
+ * @param {string} code - Original Strudel code
+ * @returns {string} - Modified code with analyse calls
+ */
+function wrapWithAnalyse(code) {
+  // Check if code already has analyze calls
+  if (code.includes('.analyze(') || code.includes('.scope(') || code.includes('.fscope(')) {
+    return code;
+  }
+
+  // Wrap the pattern with analyze by appending to the last pattern expression
+  const trimmed = code.trimEnd();
+
+  // If code ends with a pattern (closing paren, bracket, or quote), add analyze
+  if (/[)\]"'`\d]$/.test(trimmed)) {
+    // Add both spectrum and waveform analysis
+    return `${trimmed}.analyze(${SPECTRUM_ANALYSER_ID}).analyze(${WAVEFORM_ANALYSER_ID})`;
+  }
+
+  return code;
 }
 
 /**
@@ -42,13 +64,18 @@ export async function init() {
 export async function play(code) {
   await init();
 
+  const ctx = getSuperdoughContext();
+
   // Resume audio context if suspended (browser autoplay policy)
-  if (audioContext.state === 'suspended') {
-    await audioContext.resume();
+  if (ctx.state === 'suspended') {
+    await ctx.resume();
   }
 
+  // Wrap code with analyze calls for visualization
+  const wrappedCode = wrapWithAnalyse(code);
+
   // Evaluate the Strudel code
-  await evaluate(code);
+  await evaluate(wrappedCode);
 }
 
 /**
@@ -59,27 +86,35 @@ export function stop() {
 }
 
 /**
- * Get the frequency spectrum analyser
- * @returns {AnalyserNode}
+ * Get the frequency spectrum analyser (connected after first play)
+ * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
-  return analyser;
+  return analysers[SPECTRUM_ANALYSER_ID] || null;
 }
 
 /**
- * Get the waveform analyser
- * @returns {AnalyserNode}
+ * Get the waveform analyser (connected after first play)
+ * @returns {AnalyserNode|null}
  */
 export function getWaveformAnalyser() {
-  return waveformAnalyser;
+  return analysers[WAVEFORM_ANALYSER_ID] || null;
 }
 
 /**
- * Get the audio context
+ * Get all analysers object (for direct access)
+ * @returns {Object}
+ */
+export function getAnalysers() {
+  return analysers;
+}
+
+/**
+ * Get the audio context (from superdough)
  * @returns {AudioContext}
  */
 export function getAudioContext() {
-  return audioContext;
+  return getSuperdoughContext();
 }
 
 /**

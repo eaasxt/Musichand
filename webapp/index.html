@@ -534,9 +534,9 @@
         onChange: handleCodeChange,
       });
 
-      // Create visualizations (with dummy analyser for now)
-      visualizations.waveform = createWaveformViz('viz-waveform', null);
-      visualizations.spectrum = createSpectrumViz('viz-spectrum', null);
+      // Create visualizations (analysers obtained dynamically from superdough)
+      visualizations.waveform = createWaveformViz('viz-waveform');
+      visualizations.spectrum = createSpectrumViz('viz-spectrum');
       visualizations.beat = createBeatIndicator('viz-beat', 120);
 
       // Load playlist

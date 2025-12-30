@@ -100,7 +100,7 @@
       align-items: center;
     }
 
-    button {
+    button, select {
       background: #0f3460;
       color: #eee;
       border: none;
@@ -111,7 +111,7 @@
       transition: background 0.2s;
     }
 
-    button:hover {
+    button:hover, select:hover {
       background: #e94560;
     }
 
@@ -122,6 +122,10 @@
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    select {
+      padding: 0.5rem 0.8rem;
     }
 
     #status {
@@ -150,7 +154,7 @@
       width: 100%;
     }
 
-    /* AI Generation Section */
+    /* Generation Section */
     .generate-section {
       background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
       padding: 1.5rem;
@@ -167,6 +171,7 @@
     .generate-row {
       display: flex;
       gap: 1rem;
+      margin-bottom: 1rem;
     }
 
     #promptInput {
@@ -202,6 +207,42 @@
       background: #666;
     }
 
+    /* Options Row */
+    .options-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .option-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .option-group label {
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .option-group select {
+      background: #1a1a2e;
+      border: 1px solid #0f3460;
+      min-width: 100px;
+    }
+
+    .toggle-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      border-radius: 20px;
+    }
+
+    .toggle-btn.active {
+      background: #2d6a4f;
+    }
+
+    /* Quick prompts */
     .quick-prompts {
       display: flex;
       gap: 0.5rem;
@@ -214,6 +255,58 @@
       padding: 0.4rem 0.8rem;
       font-size: 0.8rem;
       border-radius: 20px;
+    }
+
+    /* Pattern Picker */
+    .pattern-section {
+      background: #16213e;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #0f3460;
+    }
+
+    .pattern-section h3 {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 0.75rem;
+    }
+
+    .pattern-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .pattern-tab {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      background: #0f3460;
+    }
+
+    .pattern-tab.active {
+      background: #e94560;
+    }
+
+    .pattern-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .pattern-item {
+      background: #1a1a2e;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid #0f3460;
+    }
+
+    .pattern-item:hover {
+      border-color: #e94560;
     }
 
     #code-display {
@@ -273,6 +366,11 @@
       .controls {
         flex-wrap: wrap;
       }
+
+      .options-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
@@ -303,18 +401,77 @@
     <div class="generate-section">
       <h2>Describe your music</h2>
       <div class="generate-row">
-        <input type="text" id="promptInput" placeholder="e.g., funky house beat with acid bassline and filtered pads">
+        <input type="text" id="promptInput" placeholder="e.g., dark techno in D minor at 135 bpm">
         <button id="generateBtn">Generate</button>
       </div>
+      
+      <div class="options-row">
+        <div class="option-group">
+          <label>Genre:</label>
+          <select id="genreSelect">
+            <option value="">Auto-detect</option>
+            <option value="house">House</option>
+            <option value="techno">Techno</option>
+            <option value="ambient">Ambient</option>
+            <option value="dnb">Drum & Bass</option>
+            <option value="lofi">Lo-Fi</option>
+            <option value="jazz">Jazz</option>
+            <option value="trap">Trap</option>
+            <option value="minimal">Minimal</option>
+            <option value="disco">Disco</option>
+          </select>
+        </div>
+        
+        <div class="option-group">
+          <label>Key:</label>
+          <select id="keySelect">
+            <option value="">Auto</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="G">G</option>
+            <option value="A">A</option>
+            <option value="Bb">Bb</option>
+          </select>
+        </div>
+        
+        <div class="option-group">
+          <label>Mode:</label>
+          <select id="modeSelect">
+            <option value="">Auto</option>
+            <option value="minor">Minor</option>
+            <option value="major">Major</option>
+          </select>
+        </div>
+        
+        <button id="multitrackToggle" class="toggle-btn active">Multi-Track</button>
+        <button id="llmToggle" class="toggle-btn">Use LLM</button>
+      </div>
+      
       <div class="quick-prompts">
         <button class="quick-prompt" data-prompt="four on the floor kick with hi-hats">House beat</button>
-        <button class="quick-prompt" data-prompt="acid bassline with filter sweep">Acid bass</button>
+        <button class="quick-prompt" data-prompt="dark techno with acid bassline">Acid techno</button>
         <button class="quick-prompt" data-prompt="ambient pad with reverb and slow filter">Ambient</button>
         <button class="quick-prompt" data-prompt="jazz chord progression with voicings">Jazz chords</button>
-        <button class="quick-prompt" data-prompt="euclidean polyrhythm with kick and snare">Polyrhythm</button>
-        <button class="quick-prompt" data-prompt="generative melody using random notes from minor scale">Generative</button>
+        <button class="quick-prompt" data-prompt="trap beat with 808 and hi-hat rolls">Trap</button>
+        <button class="quick-prompt" data-prompt="chill lofi with melody">Lo-Fi</button>
       </div>
       <div id="generate-status"></div>
+    </div>
+
+    <!-- Pattern Picker -->
+    <div class="pattern-section">
+      <h3>Pattern Library - Click to insert</h3>
+      <div class="pattern-tabs">
+        <button class="pattern-tab active" data-category="drums">Drums</button>
+        <button class="pattern-tab" data-category="bass">Bass</button>
+        <button class="pattern-tab" data-category="chords">Chords</button>
+        <button class="pattern-tab" data-category="leads">Leads</button>
+      </div>
+      <div id="pattern-list" class="pattern-list">
+        <!-- Populated by JS -->
+      </div>
     </div>
 
     <div id="code-display">
@@ -322,7 +479,8 @@
     </div>
 
     <div class="info">
-      Describe what you want to hear, click Generate, then Play. Shortcuts: <code>Space</code> play/stop, <code>Ctrl+Enter</code> generate+play
+      Describe what you want, pick a genre, and click Generate. Use the pattern library to add elements.
+      <br>Shortcuts: <code>Space</code> play/stop, <code>Ctrl+Enter</code> generate+play
     </div>
     <div id="error-container"></div>
   </main>
