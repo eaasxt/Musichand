@@ -30,13 +30,16 @@ export async function init() {
   interceptGain.connect(masterAnalyser);
   masterAnalyser.connect(audioContext.destination);
 
-  // Patch AudioNode.prototype.connect to redirect ALL destination connections
-  // Check by type (AudioDestinationNode) not by reference, to catch all contexts
+  // Store reference to our destination for comparison
+  const ourDestination = audioContext.destination;
+
+  // Patch AudioNode.prototype.connect to redirect destination connections
+  // ONLY for nodes belonging to the SAME audio context (avoid cross-context errors)
   const originalConnect = AudioNode.prototype.connect;
   AudioNode.prototype.connect = function(dest, ...args) {
-    // Intercept any connection to ANY AudioDestinationNode
-    if (dest instanceof AudioDestinationNode) {
-      console.log('[Musicman] Intercepting destination connection');
+    // Only intercept if destination is our audio context's destination
+    // and source node belongs to the same context
+    if (dest === ourDestination && this.context === audioContext) {
       return originalConnect.call(this, interceptGain, ...args);
     }
     return originalConnect.call(this, dest, ...args);
