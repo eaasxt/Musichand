@@ -10,8 +10,22 @@ import { mini } from '@strudel/mini';
 import { webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { registerSynthSounds, registerZZFXSounds } from '@strudel/webaudio';
 
-// Configuration
-const API_URL = 'http://localhost:8080';
+// Configuration - API URL based on environment
+const API_URL = (() => {
+  const host = window.location.hostname;
+  // Local development
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://localhost:8080';
+  }
+  // Local network access (VM IP)
+  if (host.startsWith('172.') || host.startsWith('192.168.') || host.startsWith('10.')) {
+    return `http://${host}:8080`;
+  }
+  // Production (Vercel/Cloudflare) - use viernes.cc tunnel
+  return 'https://musicman-api.viernes.cc';
+})();
+
+console.log('API URL:', API_URL);
 
 // Pattern library (subset for quick access)
 const PATTERNS = {
@@ -174,6 +188,7 @@ async function generateCode() {
     }
     
     const url = API_URL + endpoint + '?' + params;
+    console.log('Fetching:', url);
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -199,7 +214,7 @@ async function generateCode() {
 
   } catch (err) {
     console.error('Generation error:', err);
-    generateStatus.innerHTML = '<div class="error-msg">Generation failed: ' + err.message + '. Is the API running?</div>';
+    generateStatus.innerHTML = '<div class="error-msg">Generation failed: ' + err.message + '</div>';
     return null;
   } finally {
     generateBtn.disabled = false;
@@ -307,7 +322,8 @@ reloadBtn.addEventListener('click', reload);
 generateBtn.addEventListener('click', generateCode);
 
 promptInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
+  if (e.key === 'Enter' && !e.ctrlKey) {
+    e.preventDefault();
     generateCode();
   }
 });
@@ -344,15 +360,18 @@ patternTabs.forEach(tab => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+  // Space to play/stop (but not when typing in input)
   if (e.key === ' ' && e.target !== promptInput) {
     e.preventDefault();
     isPlaying ? stop() : play();
   }
+  // Ctrl+R to reload
   if (e.key === 'r' && e.ctrlKey) {
     e.preventDefault();
     reload();
   }
-  if (e.key === 'Enter' && e.ctrlKey && promptInput.value.trim()) {
+  // Ctrl+Enter to generate and play
+  if (e.key === 'Enter' && e.ctrlKey) {
     e.preventDefault();
     generateAndPlay();
   }
@@ -372,12 +391,12 @@ fetch(API_URL + '/health')
   .then(data => {
     console.log('API connected:', data);
     const features = data.features ? data.features.join(', ') : 'generate';
-    generateStatus.innerHTML = '<div class="success-msg">API connected (' + data.model + ') - ' + features + '</div>';
+    generateStatus.innerHTML = '<div class="success-msg">API connected (' + data.model + ')</div>';
     setTimeout(() => { generateStatus.innerHTML = ''; }, 3000);
   })
-  .catch(() => {
-    console.warn('API not available - start with: ~/Musicman/scripts/restart_api.sh');
-    generateStatus.innerHTML = '<div class="error-msg">API offline - run restart_api.sh</div>';
+  .catch(err => {
+    console.warn('API not available:', err);
+    generateStatus.innerHTML = '<div class="error-msg">API offline - check server</div>';
   });
 
 // HMR support
@@ -386,4 +405,4 @@ if (import.meta.hot) {
 }
 
 console.log('Musicman Generator initialized');
-console.log('Shortcuts: Space=play/stop, Ctrl+Enter=generate+play');
+console.log('Shortcuts: Space=play/stop, Ctrl+Enter=generate+play, Enter=generate');
