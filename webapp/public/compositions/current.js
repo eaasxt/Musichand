@@ -6,7 +6,6 @@ setcpm(120)
 stack(
   // Drums - laid back groove
   s("bd ~ [~ bd] ~, ~ sd ~ sd, [hh hh] [hh oh]")
-    .bank("RolandTR808")
     .gain(0.85),
 
   // Bass - simple A minor pattern
@@ -19,7 +18,7 @@ stack(
   // Chords - Am F C G progression
   chord("<Am F C G>")
     .voicing()
-    .s("gm_epiano1")
+    .s("triangle")
     .room(0.4)
     .lpf(2000)
     .gain(0.5)
@@ -28,7 +27,7 @@ stack(
   // Sparkle - pentatonic melody
   n("0 4 7 11, ~ 2 ~ 9")
     .scale("A4:minor")
-    .s("gm_celesta")
+    .s("sine")
     .delay(0.3)
     .delaytime(0.375)
     .room(0.6)

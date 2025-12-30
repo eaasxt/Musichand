@@ -8,24 +8,20 @@ setcps(120/60/4)
 // Kick drum - 4 on the floor with euclidean variation
 $: s("bd(5,8)")
   .gain(0.9)
-  .bank("RolandTR909")
 
 // Snare - backbeat with ghost notes
 $: s("~ sd ~ [sd:2 sd]")
   .gain(0.75)
-  .bank("RolandTR909")
   .room(0.15)
 
 // Hi-hats - euclidean rhythm with open hat accents
 $: s("hh(7,8), ~ ~ ~ oh")
   .gain(0.5)
-  .bank("RolandTR909")
   .pan(sine.range(0.4, 0.6).slow(4))
 
 // Ride for texture - sparse euclidean
-$: s("ride(3,8)")
+$: s("cp(3,8)")
   .gain(0.3)
-  .bank("RolandTR909")
   .every(4, x => x.fast(2))
 
 // Bass line - complementary rhythm in A minor
