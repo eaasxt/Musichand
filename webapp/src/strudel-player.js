@@ -4,16 +4,11 @@
  */
 
 import { initStrudel, evaluate, hush, samples } from '@strudel/web';
-import {
-  getAudioContext as getSuperdoughContext,
-  getAnalyserById,
-} from 'superdough';
+import { getAudioContext as getSuperdoughContext } from 'superdough';
 
 let initialized = false;
 let audioContext = null;
-
-// Analyzer ID used for all patterns
-const ANALYZER_ID = 'musicman';
+let masterAnalyser = null;
 
 /**
  * Initialize Strudel and audio analysis
@@ -31,7 +26,34 @@ export async function init() {
   // Get the audio context that superdough created
   audioContext = getSuperdoughContext();
 
-  console.log('[Musicman] Strudel initialized');
+  // Create master analyser and insert it before the destination
+  // This captures ALL audio output for visualization
+  masterAnalyser = audioContext.createAnalyser();
+  masterAnalyser.fftSize = 2048;
+  masterAnalyser.smoothingTimeConstant = 0.8;
+
+  // Patch the destination to route through our analyser
+  // Save original destination
+  const originalDestination = audioContext.destination;
+
+  // Create a gain node as our new "destination" that routes through analyser
+  const interceptNode = audioContext.createGain();
+  interceptNode.connect(masterAnalyser);
+  masterAnalyser.connect(originalDestination);
+
+  // Monkey-patch GainNode.connect to intercept connections to destination
+  const originalConnect = GainNode.prototype.connect;
+
+  // Override connect on all GainNodes to intercept destination connections
+  GainNode.prototype.connect = function(dest, ...args) {
+    if (dest === originalDestination) {
+      // Redirect to our intercept node instead
+      return originalConnect.call(this, interceptNode, ...args);
+    }
+    return originalConnect.call(this, dest, ...args);
+  };
+
+  console.log('[Musicman] Strudel initialized with master analyser');
 
   initialized = true;
 }
@@ -48,64 +70,11 @@ export async function play(code) {
     await audioContext.resume(); // nolint - caller handles errors
   }
 
-  // Wrap the code to add .analyze() for visualization
-  // This injects analyze at the end of the pattern chain
-  const wrappedCode = wrapCodeWithAnalyze(code, ANALYZER_ID);
+  // Evaluate the Strudel code directly
+  // Our master analyser intercepts all audio automatically
+  await evaluate(code); // nolint - caller handles errors
 
-  // Evaluate the wrapped Strudel code
-  await evaluate(wrappedCode); // nolint - caller handles errors
-
-  console.log('[Musicman] Pattern started with analyzer:', ANALYZER_ID);
-}
-
-/**
- * Wrap Strudel code to add .analyze() for visualization
- * @param {string} code - Original Strudel code
- * @param {string} analyzerId - The analyzer ID to use
- * @returns {string} - Modified code with .analyze() added
- */
-function wrapCodeWithAnalyze(code, analyzerId) {
-  // Strategy: Find the last closing paren/bracket of the main pattern
-  // and insert .analyze() before any trailing content
-
-  // First, check if the code already has .analyze()
-  if (code.includes('.analyze(')) {
-    return code;
-  }
-
-  // Find the main pattern - usually ends with a closing paren
-  // We need to find the last ) that's part of the pattern, not a comment
-  const lines = code.split('\n');
-  const codeLines = [];
-  const trailingLines = [];
-
-  let foundEnd = false;
-  for (let i = lines.length - 1; i >= 0; i--) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    // Skip empty lines and comments at the end
-    if (!foundEnd && (trimmed === '' || trimmed.startsWith('//'))) {
-      trailingLines.unshift(line);
-      continue;
-    }
-
-    foundEnd = true;
-    codeLines.unshift(line);
-  }
-
-  // Join code lines and add .analyze() at the end
-  let codeBlock = codeLines.join('\n');
-
-  // Find the last ) and add .analyze() after it
-  const lastParen = codeBlock.lastIndexOf(')');
-  if (lastParen !== -1) {
-    codeBlock = codeBlock.slice(0, lastParen + 1) +
-                `.analyze("${analyzerId}").fft(6)` +
-                codeBlock.slice(lastParen + 1);
-  }
-
-  return codeBlock + '\n' + trailingLines.join('\n');
+  console.log('[Musicman] Pattern started');
 }
 
 /**
@@ -116,21 +85,12 @@ export function stop() {
 }
 
 /**
- * Get the analyser for visualizations
- * Uses superdough's built-in analyzer system
+ * Get the master analyser for visualizations
+ * This analyser captures ALL audio output for waveform/spectrum display
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
-  // Get the analyser from superdough using British spelling: getAnalyserById
-  // This function returns existing analyzer or creates one if needed
-  // Using fftSize 2048 (2^11) to match .fft(6) which gives 2^(6+5)=2048
-  try {
-    const analyser = getAnalyserById(ANALYZER_ID, 2048, 0.8);
-    return analyser;
-  } catch {
-    // Analyzer not ready yet (audio context may not be initialized)
-    return null;
-  }
+  return masterAnalyser;
 }
 
 /**
