@@ -24,14 +24,10 @@ export async function init() {
   if (initialized) return;
 
   // Initialize Strudel with sample banks loaded
+  // Note: tidalcycles/Dirt-Samples uses 'master' branch, not 'main'
   await initStrudel({
     prebake: () =>
-      Promise.all([
-        // Load drum machines (RolandTR808, RolandTR909, etc.)
-        samples('github:ritchse/tidal-drum-machines'),
-        // Load instrument samples (VCSL - piano, strings, etc.)
-        samples('github:sgossner/VCSL'),
-      ]),
+      samples('github:tidalcycles/Dirt-Samples/master'),
   });
 
   // Pre-create analyser with settings good for both waveform and spectrum
