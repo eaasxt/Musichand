@@ -33,9 +33,19 @@ export function createWaveformViz(containerId) {
       // Get analyser dynamically (may not exist until audio plays)
       const analyser = analysers[ANALYSER_ID];
 
+      // Debug logging (throttled)
+      if (p.frameCount % 60 === 0) {
+        console.log('[Viz] Waveform - analyser:', !!analyser, 'keys:', Object.keys(analysers));
+      }
+
       if (analyser) {
         // Get Float32Array data from superdough (-1 to 1 range)
         const dataArray = getAnalyzerData('time', ANALYSER_ID);
+
+        // Debug: log sample data occasionally
+        if (p.frameCount % 60 === 0) {
+          console.log('[Viz] Waveform data sample:', dataArray?.slice(0, 5));
+        }
 
         // Draw waveform
         p.stroke(233, 69, 96); // #e94560

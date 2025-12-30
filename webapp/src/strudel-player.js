@@ -75,8 +75,23 @@ export async function play(code) {
   // Wrap code with analyze calls for visualization
   const wrappedCode = wrapWithAnalyse(code);
 
+  // Debug: log the wrapped code and analyser state
+  console.log('[Musicman] Wrapped code:', wrappedCode.slice(-100));
+  console.log('[Musicman] Analysers before eval:', Object.keys(analysers));
+
   // Evaluate the Strudel code
   await evaluate(wrappedCode);
+
+  // Debug: check analyser state after eval
+  setTimeout(() => {
+    console.log('[Musicman] Analysers after eval:', Object.keys(analysers));
+    console.log('[Musicman] Analyser 1:', analysers[ANALYSER_ID]);
+    if (analysers[ANALYSER_ID]) {
+      const data = new Float32Array(analysers[ANALYSER_ID].frequencyBinCount);
+      analysers[ANALYSER_ID].getFloatTimeDomainData(data);
+      console.log('[Musicman] Sample data:', data.slice(0, 10));
+    }
+  }, 1000);
 }
 
 /**
