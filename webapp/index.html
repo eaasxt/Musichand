@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strudel Composer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #16213e;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0f3460;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #e94560;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+    }
+
+    button {
+      background: #0f3460;
+      color: #eee;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #e94560;
+    }
+
+    button.active {
+      background: #e94560;
+    }
+
+    #status {
+      padding: 0.5rem 1rem;
+      background: #0f3460;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    #status.playing {
+      background: #2d6a4f;
+    }
+
+    #status.error {
+      background: #9d0208;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    #code-display {
+      background: #16213e;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #0f3460;
+      flex: 1;
+      overflow: auto;
+    }
+
+    pre {
+      font-family: inherit;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: #a8dadc;
+    }
+
+    .info {
+      background: #16213e;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    footer {
+      background: #16213e;
+      padding: 1rem 2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.8rem;
+      border-top: 1px solid #0f3460;
+    }
+
+    .error-msg {
+      background: #9d0208;
+      color: white;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Strudel Composer</h1>
+    <div class="controls">
+      <span id="status">Stopped</span>
+      <button id="playBtn">Play</button>
+      <button id="stopBtn">Stop</button>
+      <button id="reloadBtn">Reload</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="code-display">
+      <pre id="code">Loading composition...</pre>
+    </div>
+    <div class="info">
+      Edit <code>compositions/current.js</code> and click Reload (or save to auto-reload)
+    </div>
+    <div id="error-container"></div>
+  </main>
+
+  <footer>
+    Strudel Composer - AI Music Generation Interface
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

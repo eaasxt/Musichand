@@ -1,0 +1,20 @@
+{
+  "name": "strudel-composer-web",
+  "version": "1.0.0",
+  "description": "Hot-reloading Strudel player for AI composition",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "@strudel/core": "^1.0.0",
+    "@strudel/mini": "^1.0.0",
+    "@strudel/webaudio": "^1.0.0",
+    "@strudel/tonal": "^1.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
