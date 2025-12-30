@@ -52,27 +52,14 @@
       background-clip: text;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
+    .header-info {
+      color: #666;
+      font-size: 0.8rem;
     }
 
-    .nav-links a {
-      color: #888;
-      text-decoration: none;
-      font-size: 0.9rem;
-      padding: 0.5rem 0;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: #e0e0e0;
-    }
-
-    .nav-links a.active {
+    .header-info a {
       color: #e94560;
-      border-bottom-color: #e94560;
+      text-decoration: none;
     }
 
     .main-container {
@@ -199,7 +186,7 @@
       margin-bottom: 0.5rem;
     }
 
-    /* Main content - Strudel iframe */
+    /* Main content */
     .content {
       flex: 1;
       display: flex;
@@ -235,11 +222,137 @@
       color: #666;
     }
 
-    #strudel-frame {
-      flex: 1;
-      width: 100%;
+    /* Transport controls */
+    .transport {
+      background: #16213e;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #2a2a4a;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .transport-btn {
+      background: #2a2a4a;
       border: none;
-      background: #1a1a2e;
+      color: #e0e0e0;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .transport-btn:hover {
+      background: #3a3a5a;
+    }
+
+    .transport-btn.play {
+      background: #e94560;
+      color: white;
+    }
+
+    .transport-btn.play:hover {
+      background: #ff6b6b;
+    }
+
+    .transport-btn.stop {
+      background: #4a4a6a;
+    }
+
+    .transport-btn.stop:hover {
+      background: #5a5a7a;
+    }
+
+    .transport-info {
+      margin-left: auto;
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .transport-info span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #555;
+    }
+
+    .status-dot.playing {
+      background: #2ed573;
+      animation: pulse-dot 1s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .keyboard-hint {
+      font-size: 0.7rem;
+      color: #555;
+      margin-left: 1rem;
+    }
+
+    .keyboard-hint kbd {
+      background: #2a2a4a;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+
+    /* Editor section */
+    .editor-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    #editor-container {
+      flex: 1;
+      min-height: 200px;
+      overflow: hidden;
+    }
+
+    /* Visualizations */
+    .visualizations {
+      background: #12121a;
+      border-top: 1px solid #2a2a4a;
+      padding: 0.5rem;
+    }
+
+    .viz-row {
+      margin-bottom: 0.5rem;
+    }
+
+    .viz-row:last-child {
+      margin-bottom: 0;
+    }
+
+    #viz-waveform,
+    #viz-spectrum,
+    #viz-beat {
+      width: 100%;
+      border-radius: 4px;
+      overflow: hidden;
     }
 
     /* Loading state */
@@ -318,6 +431,10 @@
       .overlay.open {
         display: block;
       }
+
+      .keyboard-hint {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -327,10 +444,9 @@
       <div class="logo-icon">M</div>
       <h1>Musicman</h1>
     </div>
-    <nav class="nav-links">
-      <a href="/" class="active">Library</a>
-      <a href="/generator.html">Generator</a>
-    </nav>
+    <span class="header-info">
+      Visual DAW powered by <a href="https://strudel.cc" target="_blank">Strudel</a>
+    </span>
   </header>
 
   <div class="main-container">
@@ -353,17 +469,135 @@
         <span class="now-playing-title" id="nowPlayingTitle">-</span>
         <span class="now-playing-info" id="nowPlayingInfo"></span>
       </div>
-      <iframe id="strudel-frame" src="https://strudel.cc/"></iframe>
+
+      <div class="transport">
+        <button class="transport-btn play" id="playBtn" onclick="handlePlay()">
+          <span>▶</span> Play
+        </button>
+        <button class="transport-btn stop" id="stopBtn" onclick="handleStop()">
+          <span>■</span> Stop
+        </button>
+        <div class="status">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Ready</span>
+        </div>
+        <div class="transport-info">
+          <span id="bpmDisplay">120 BPM</span>
+          <span id="keyDisplay"></span>
+        </div>
+        <div class="keyboard-hint">
+          <kbd>Ctrl</kbd>+<kbd>Enter</kbd> play | <kbd>Ctrl</kbd>+<kbd>.</kbd> stop
+        </div>
+      </div>
+
+      <div class="editor-section">
+        <div id="editor-container"></div>
+      </div>
+
+      <div class="visualizations">
+        <div class="viz-row" id="viz-waveform"></div>
+        <div class="viz-row" id="viz-spectrum"></div>
+        <div class="viz-row" id="viz-beat"></div>
+      </div>
     </main>
   </div>
 
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
   <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
 
-  <script>
+  <script type="module">
+    import { play, stop, extractBPM, extractKey, init } from './src/strudel-player.js';
+    import { createEditor, DEFAULT_CODE } from './src/editor.js';
+    import { createWaveformViz, createSpectrumViz, createBeatIndicator } from './src/visualizer.js';
+
+    // State
     let currentTrack = null;
     let compositions = [];
+    let isPlaying = false;
+    let editor = null;
+    let visualizations = {};
 
+    // Initialize the app
+    async function initApp() {
+      // Initialize Strudel (preload)
+      try {
+        await init();
+      } catch (err) {
+        console.log('Strudel will init on first play');
+      }
+
+      // Create editor
+      editor = createEditor('editor-container', {
+        initialCode: DEFAULT_CODE,
+        onEvaluate: handlePlay,
+        onStop: handleStop,
+        onChange: handleCodeChange,
+      });
+
+      // Create visualizations (with dummy analyser for now)
+      visualizations.waveform = createWaveformViz('viz-waveform', null);
+      visualizations.spectrum = createSpectrumViz('viz-spectrum', null);
+      visualizations.beat = createBeatIndicator('viz-beat', 120);
+
+      // Load playlist
+      loadPlaylist();
+
+      // Expose functions to global scope for onclick handlers
+      window.loadPlaylist = loadPlaylist;
+      window.loadTrack = loadTrack;
+      window.handlePlay = handlePlay;
+      window.handleStop = handleStop;
+      window.toggleSidebar = toggleSidebar;
+    }
+
+    // Handle code changes
+    function handleCodeChange(code) {
+      const bpm = extractBPM(code);
+      const key = extractKey(code);
+
+      document.getElementById('bpmDisplay').textContent = `${Math.round(bpm)} BPM`;
+      document.getElementById('keyDisplay').textContent = key || '';
+
+      if (visualizations.beat) {
+        visualizations.beat.setBPM(bpm);
+      }
+    }
+
+    // Play the current code
+    async function handlePlay() {
+      const code = editor.getCode();
+
+      try {
+        setStatus('playing', 'Playing...');
+        await play(code);
+        isPlaying = true;
+      } catch (err) {
+        console.error('Playback error:', err);
+        setStatus('error', 'Error: ' + err.message);
+      }
+    }
+
+    // Stop playback
+    function handleStop() {
+      stop();
+      isPlaying = false;
+      setStatus('stopped', 'Stopped');
+    }
+
+    // Update status display
+    function setStatus(state, text) {
+      const dot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+
+      dot.className = 'status-dot';
+      if (state === 'playing') {
+        dot.classList.add('playing');
+      }
+
+      statusText.textContent = text;
+    }
+
+    // Load playlist from API
     async function loadPlaylist() {
       const playlist = document.getElementById('playlist');
       playlist.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
@@ -380,13 +614,13 @@
           playlist.innerHTML = `
             <div class="empty-state">
               <p>No compositions yet</p>
-              <p style="font-size: 0.75rem;">Add .js files to public/compositions/<br>or run extract_music.py on audio</p>
+              <p style="font-size: 0.75rem;">Add .js files to public/compositions/</p>
             </div>
           `;
           return;
         }
 
-        playlist.innerHTML = compositions.map((comp, i) => `
+        playlist.innerHTML = compositions.map((comp) => `
           <div class="playlist-item ${currentTrack === comp.id ? 'active' : ''}"
                onclick="loadTrack('${comp.id}')"
                data-id="${comp.id}">
@@ -412,6 +646,7 @@
       }
     }
 
+    // Load a track into the editor
     async function loadTrack(id) {
       const comp = compositions.find(c => c.id === id);
       if (!comp) return;
@@ -434,21 +669,14 @@
 
       // Fetch the code
       try {
-        // Add cache-busting to ensure fresh fetch
         const response = await fetch(comp.file + '?t=' + Date.now());
         const code = await response.text();
 
-        // Encode for Strudel URL (base64)
-        // Use encodeURIComponent for special chars, then btoa
-        const encoded = btoa(unescape(encodeURIComponent(code)));
-        const strudelUrl = `https://strudel.cc/#${encoded}`;
+        // Load into editor
+        editor.setCode(code);
 
-        // Force iframe reload by replacing it
-        const iframe = document.getElementById('strudel-frame');
-        const newIframe = iframe.cloneNode(false);
-        newIframe.src = strudelUrl;
-        iframe.parentNode.replaceChild(newIframe, iframe);
-        newIframe.id = 'strudel-frame';
+        // Update BPM display
+        handleCodeChange(code);
 
         // Close sidebar on mobile
         if (window.innerWidth <= 768) {
@@ -476,8 +704,8 @@
       return div.innerHTML;
     }
 
-    // Load playlist on page load
-    loadPlaylist();
+    // Initialize on load
+    initApp();
 
     // Auto-refresh playlist every 30 seconds
     setInterval(loadPlaylist, 30000);

@@ -1,5 +1,15 @@
 [
   {
+    "id": "current copy",
+    "name": "Basic 4-bar beat pattern",
+    "file": "/compositions/current copy.js",
+    "source": "local",
+    "bpm": 120,
+    "key": null,
+    "modifiedAt": "2025-12-30T04:56:08.247Z",
+    "size": 1130
+  },
+  {
     "id": "beat-pattern-909",
     "name": "Basic 4-bar beat pattern",
     "file": "/compositions/beat-pattern-909.js",
