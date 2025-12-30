@@ -6,10 +6,7 @@
 
 import p5 from 'p5';
 import { analysers, getAnalyzerData } from 'superdough';
-
-// Analyser IDs matching strudel-player.js
-const SPECTRUM_ANALYSER_ID = 1;
-const WAVEFORM_ANALYSER_ID = 2;
+import { ANALYSER_ID } from './strudel-player.js';
 
 /**
  * Create a waveform (oscilloscope) visualization
@@ -34,11 +31,11 @@ export function createWaveformViz(containerId) {
       p.line(0, p.height / 2, p.width, p.height / 2);
 
       // Get analyser dynamically (may not exist until audio plays)
-      const analyser = analysers[WAVEFORM_ANALYSER_ID];
+      const analyser = analysers[ANALYSER_ID];
 
       if (analyser) {
         // Get Float32Array data from superdough (-1 to 1 range)
-        const dataArray = getAnalyzerData('time', WAVEFORM_ANALYSER_ID);
+        const dataArray = getAnalyzerData('time', ANALYSER_ID);
 
         // Draw waveform
         p.stroke(233, 69, 96); // #e94560
@@ -95,14 +92,14 @@ export function createSpectrumViz(containerId) {
       p.background(20, 20, 30);
 
       // Get analyser dynamically (may not exist until audio plays)
-      const analyser = analysers[SPECTRUM_ANALYSER_ID];
+      const analyser = analysers[ANALYSER_ID];
 
       const barCount = 64;
       const barWidth = p.width / barCount;
 
       if (analyser) {
         // Get Float32Array frequency data from superdough (dB values, typically -100 to 0)
-        const dataArray = getAnalyzerData('frequency', SPECTRUM_ANALYSER_ID);
+        const dataArray = getAnalyzerData('frequency', ANALYSER_ID);
         const binSize = Math.floor(dataArray.length / barCount);
 
         for (let i = 0; i < barCount; i++) {
@@ -182,7 +179,7 @@ export function createBeatIndicator(containerId, bpm = 120) {
       p.background(20, 20, 30);
 
       // Check if audio is actually playing by looking for analyser
-      const analyser = analysers[WAVEFORM_ANALYSER_ID];
+      const analyser = analysers[ANALYSER_ID];
       const hasAudio = analyser && isPlaying;
 
       const steps = 16;

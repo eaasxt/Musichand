@@ -12,9 +12,10 @@ import {
 
 let initialized = false;
 
-// Analyser IDs used by our visualizations
-const SPECTRUM_ANALYSER_ID = 1;
-const WAVEFORM_ANALYSER_ID = 2;
+// Single analyser ID for visualizations
+// Note: .analyze() calls don't stack - only one ID can be used per pattern
+// We use a single analyser with settings that work for both waveform and spectrum
+export const ANALYSER_ID = 1;
 
 /**
  * Initialize Strudel and audio analysis
@@ -25,11 +26,9 @@ export async function init() {
   // Initialize Strudel (this also initializes superdough's AudioContext)
   await initStrudel();
 
-  // Pre-create analysers with appropriate settings
-  // Spectrum analyser: higher FFT for frequency resolution
-  getAnalyserById(SPECTRUM_ANALYSER_ID, 2048, 0.8);
-  // Waveform analyser: lower FFT for time resolution
-  getAnalyserById(WAVEFORM_ANALYSER_ID, 512, 0.5);
+  // Pre-create analyser with settings good for both waveform and spectrum
+  // FFT 2048 gives good frequency resolution, smoothing 0.8 for spectrum
+  getAnalyserById(ANALYSER_ID, 2048, 0.8);
 
   initialized = true;
 }
@@ -50,8 +49,8 @@ function wrapWithAnalyse(code) {
 
   // If code ends with a pattern (closing paren, bracket, or quote), add analyze
   if (/[)\]"'`\d]$/.test(trimmed)) {
-    // Add both spectrum and waveform analysis
-    return `${trimmed}.analyze(${SPECTRUM_ANALYSER_ID}).analyze(${WAVEFORM_ANALYSER_ID})`;
+    // Add analysis - single ID since .analyze() calls don't stack
+    return `${trimmed}.analyze(${ANALYSER_ID})`;
   }
 
   return code;
@@ -86,19 +85,11 @@ export function stop() {
 }
 
 /**
- * Get the frequency spectrum analyser (connected after first play)
+ * Get the analyser (connected after first play)
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
-  return analysers[SPECTRUM_ANALYSER_ID] || null;
-}
-
-/**
- * Get the waveform analyser (connected after first play)
- * @returns {AnalyserNode|null}
- */
-export function getWaveformAnalyser() {
-  return analysers[WAVEFORM_ANALYSER_ID] || null;
+  return analysers[ANALYSER_ID] || null;
 }
 
 /**
