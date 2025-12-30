@@ -355,7 +355,11 @@
       playlist.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
 
       try {
-        const response = await fetch('/api/compositions');
+        // Try static JSON first (production), then dev server endpoint
+        let response = await fetch('/api/compositions.json');
+        if (!response.ok) {
+          response = await fetch('/api/compositions');
+        }
         compositions = await response.json();
 
         if (compositions.length === 0) {
