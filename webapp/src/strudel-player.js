@@ -25,18 +25,18 @@ export async function init() {
   masterAnalyser.fftSize = 2048;
   masterAnalyser.smoothingTimeConstant = 0.8;
 
-  // Insert analyser into the audio graph by patching AudioNode.prototype.connect
-  // This intercepts ALL connections to the destination
-  const originalDestination = audioContext.destination;
+  // Create intercept node that routes through our analyser
   const interceptGain = audioContext.createGain();
   interceptGain.connect(masterAnalyser);
-  masterAnalyser.connect(originalDestination);
+  masterAnalyser.connect(audioContext.destination);
 
-  // Patch AudioNode.prototype.connect to redirect destination connections
+  // Patch AudioNode.prototype.connect to redirect ALL destination connections
+  // Check by type (AudioDestinationNode) not by reference, to catch all contexts
   const originalConnect = AudioNode.prototype.connect;
   AudioNode.prototype.connect = function(dest, ...args) {
-    if (dest === originalDestination) {
-      // Route through our analyser instead of directly to destination
+    // Intercept any connection to ANY AudioDestinationNode
+    if (dest instanceof AudioDestinationNode) {
+      console.log('[Musicman] Intercepting destination connection');
       return originalConnect.call(this, interceptGain, ...args);
     }
     return originalConnect.call(this, dest, ...args);
