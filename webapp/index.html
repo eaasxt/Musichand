@@ -420,15 +420,21 @@
 
       // Fetch the code
       try {
-        const response = await fetch(comp.file);
+        // Add cache-busting to ensure fresh fetch
+        const response = await fetch(comp.file + '?t=' + Date.now());
         const code = await response.text();
 
-        // Load into Strudel via URL hash
-        // Strudel supports loading code via ?code= or #code= parameter
-        const encodedCode = encodeURIComponent(code);
-        const strudelUrl = `https://strudel.cc/#${btoa(code)}`;
+        // Encode for Strudel URL (base64)
+        // Use encodeURIComponent for special chars, then btoa
+        const encoded = btoa(unescape(encodeURIComponent(code)));
+        const strudelUrl = `https://strudel.cc/#${encoded}`;
 
-        document.getElementById('strudel-frame').src = strudelUrl;
+        // Force iframe reload by replacing it
+        const iframe = document.getElementById('strudel-frame');
+        const newIframe = iframe.cloneNode(false);
+        newIframe.src = strudelUrl;
+        iframe.parentNode.replaceChild(newIframe, iframe);
+        newIframe.id = 'strudel-frame';
 
         // Close sidebar on mobile
         if (window.innerWidth <= 768) {
