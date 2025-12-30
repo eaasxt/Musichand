@@ -27,10 +27,10 @@ export async function init() {
   await initStrudel({
     prebake: () =>
       Promise.all([
-        // Load Dirt samples (bd, sd, hh, etc.)
-        samples('github:tidalcycles/dirt-samples'),
-        // Load instrument samples (piano, strings, etc.)
-        samples('github:strudel/instruments'),
+        // Load drum machines (RolandTR808, RolandTR909, etc.)
+        samples('github:ritchse/tidal-drum-machines'),
+        // Load instrument samples (VCSL - piano, strings, etc.)
+        samples('github:sgossner/VCSL'),
       ]),
   });
 
