@@ -3,7 +3,7 @@
  * Wraps @strudel/web for embedded playback with audio analysis
  */
 
-import { initStrudel, evaluate, hush } from '@strudel/web';
+import { initStrudel, evaluate, hush, samples } from '@strudel/web';
 import {
   getAudioContext as getSuperdoughContext,
   analysers,
@@ -23,8 +23,16 @@ export const ANALYSER_ID = 1;
 export async function init() {
   if (initialized) return;
 
-  // Initialize Strudel (this also initializes superdough's AudioContext)
-  await initStrudel();
+  // Initialize Strudel with sample banks loaded
+  await initStrudel({
+    prebake: () =>
+      Promise.all([
+        // Load Dirt samples (bd, sd, hh, etc.)
+        samples('github:tidalcycles/dirt-samples'),
+        // Load instrument samples (piano, strings, etc.)
+        samples('github:strudel/instruments'),
+      ]),
+  });
 
   // Pre-create analyser with settings good for both waveform and spectrum
   // FFT 2048 gives good frequency resolution, smoothing 0.8 for spectrum
