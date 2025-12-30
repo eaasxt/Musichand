@@ -5,9 +5,9 @@
  * with hot-reload support for iterative composition.
  */
 
-import { repl, controls } from '@strudel/core';
-import { mini } from '@strudel/mini';
-import { webaudioOutput, initAudioOnFirstClick, registerSynthSounds, samples } from '@strudel/webaudio';
+import { controls } from '@strudel/core';
+import { miniRepl } from '@strudel/mini';
+import { webaudioOutput, initAudioOnFirstClick, registerSynthSounds, samples, getAudioContext } from '@strudel/webaudio';
 import '@strudel/tonal';
 import '@strudel/soundfonts';
 
@@ -29,28 +29,25 @@ initAudioOnFirstClick();
 
 async function initStrudel() {
   try {
-    // Initialize REPL and audio
-    const { evaluate } = await repl({
+    // Initialize mini REPL (includes mini-notation parser)
+    const { evaluate } = await miniRepl({
       defaultOutput: webaudioOutput,
       onSchedulerError: (err) => showError(err),
       onEvalError: (err) => showError(err),
+      getTime: () => getAudioContext().currentTime,
     });
 
     // Register built-in synth sounds
     await registerSynthSounds();
 
-    // Load drum machine samples from Strudel CDN
+    // Load basic drum samples
     await samples({
-      bd: 'https://strudel.cc/samples/tidal/bd.wav',
-      sd: 'https://strudel.cc/samples/tidal/sd.wav',
-      hh: 'https://strudel.cc/samples/tidal/hh.wav',
-      oh: 'https://strudel.cc/samples/tidal/oh.wav',
-      cp: 'https://strudel.cc/samples/tidal/cp.wav',
-      ride: 'https://strudel.cc/samples/tidal/ride.wav',
-    });
-
-    // Load TR909 bank
-    await samples('github:tidalcycles/Dirt-Samples/master');
+      bd: 'bd/BT0A0D0.wav',
+      sd: 'sd/ST0T0S3.wav',
+      hh: 'hh/000_hh3closedhh.wav',
+      oh: 'oh/000_oh3openhh.wav',
+      cp: 'cp/HANDCLP0.wav',
+    }, 'https://strudel.cc/samples/');
 
     updateStatus('Ready', false);
     return evaluate;
