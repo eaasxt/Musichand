@@ -1,143 +1,13 @@
 [
   {
-    "id": "autumn_amber_descent",
-    "name": "Autumn: Amber Descent",
-    "file": "/compositions/autumn_amber_descent.js",
+    "id": "20_last_blockbuster",
+    "name": "LAST BLOCKBUSTER",
+    "file": "/compositions/20_last_blockbuster.js",
     "source": "local",
-    "bpm": 85,
+    "bpm": 95,
     "key": null,
-    "modifiedAt": "2025-12-30T15:02:24.916Z",
-    "size": 1652
-  },
-  {
-    "id": "09_cathedral_of_teeth",
-    "name": "CATHEDRAL OF TEETH",
-    "file": "/compositions/09_cathedral_of_teeth.js",
-    "source": "local",
-    "bpm": 72,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1028
-  },
-  {
-    "id": "07_amber_insect",
-    "name": "AMBER INSECT",
-    "file": "/compositions/07_amber_insect.js",
-    "source": "local",
-    "bpm": 42,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1053
-  },
-  {
-    "id": "04_wasp_factory",
-    "name": "WASP FACTORY",
-    "file": "/compositions/04_wasp_factory.js",
-    "source": "local",
-    "bpm": 144,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1028
-  },
-  {
-    "id": "14_rust_never_sleeps",
-    "name": "RUST NEVER SLEEPS",
-    "file": "/compositions/14_rust_never_sleeps.js",
-    "source": "local",
-    "bpm": 48,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1267
-  },
-  {
-    "id": "01_gravitational_lensing",
-    "name": "GRAVITATIONAL LENSING",
-    "file": "/compositions/01_gravitational_lensing.js",
-    "source": "local",
-    "bpm": 67,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1094
-  },
-  {
-    "id": "03_liminal_mall",
-    "name": "LIMINAL MALL",
-    "file": "/compositions/03_liminal_mall.js",
-    "source": "local",
-    "bpm": 108,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1133
-  },
-  {
-    "id": "15_parking_garage_2am",
-    "name": "PARKING GARAGE AT 2AM",
-    "file": "/compositions/15_parking_garage_2am.js",
-    "source": "local",
-    "bpm": 76,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1159
-  },
-  {
-    "id": "17_insomnia_arithmetic",
-    "name": "INSOMNIA ARITHMETIC",
-    "file": "/compositions/17_insomnia_arithmetic.js",
-    "source": "local",
-    "bpm": 147,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1157
-  },
-  {
-    "id": "12_dialysis_machine",
-    "name": "DIALYSIS MACHINE",
-    "file": "/compositions/12_dialysis_machine.js",
-    "source": "local",
-    "bpm": 63,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1119
-  },
-  {
-    "id": "18_mycelium_network",
-    "name": "MYCELIUM NETWORK",
-    "file": "/compositions/18_mycelium_network.js",
-    "source": "local",
-    "bpm": 66,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1190
-  },
-  {
-    "id": "06_seizure_protocol",
-    "name": "SEIZURE PROTOCOL",
-    "file": "/compositions/06_seizure_protocol.js",
-    "source": "local",
-    "bpm": 175,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1232
-  },
-  {
-    "id": "08_hemorrhage_funk",
-    "name": "HEMORRHAGE FUNK",
-    "file": "/compositions/08_hemorrhage_funk.js",
-    "source": "local",
-    "bpm": 116,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1057
-  },
-  {
-    "id": "11_deep_fryer_meditation",
-    "name": "DEEP FRYER MEDITATION",
-    "file": "/compositions/11_deep_fryer_meditation.js",
-    "source": "local",
-    "bpm": 82,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1031
+    "modifiedAt": "2025-12-30T16:40:37.125Z",
+    "size": 2541
   },
   {
     "id": "19_vending_machine_requiem",
@@ -146,38 +16,28 @@
     "source": "local",
     "bpm": 88,
     "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1118
+    "modifiedAt": "2025-12-30T16:40:35.769Z",
+    "size": 2465
   },
   {
-    "id": "02_fermentation",
-    "name": "FERMENTATION",
-    "file": "/compositions/02_fermentation.js",
+    "id": "18_mycelium_network",
+    "name": "MYCELIUM NETWORK",
+    "file": "/compositions/18_mycelium_network.js",
     "source": "local",
-    "bpm": 93,
+    "bpm": 66,
     "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1129
+    "modifiedAt": "2025-12-30T16:40:34.641Z",
+    "size": 2574
   },
   {
-    "id": "10_kudzu_takeover",
-    "name": "KUDZU TAKEOVER",
-    "file": "/compositions/10_kudzu_takeover.js",
+    "id": "17_insomnia_arithmetic",
+    "name": "INSOMNIA ARITHMETIC",
+    "file": "/compositions/17_insomnia_arithmetic.js",
     "source": "local",
-    "bpm": 98,
+    "bpm": 147,
     "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1133
-  },
-  {
-    "id": "13_static_cling",
-    "name": "STATIC CLING",
-    "file": "/compositions/13_static_cling.js",
-    "source": "local",
-    "bpm": 132,
-    "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1064
+    "modifiedAt": "2025-12-30T16:40:33.745Z",
+    "size": 2626
   },
   {
     "id": "16_bioluminescence",
@@ -186,8 +46,108 @@
     "source": "local",
     "bpm": 58,
     "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1251
+    "modifiedAt": "2025-12-30T16:40:33.129Z",
+    "size": 2698
+  },
+  {
+    "id": "15_parking_garage_2am",
+    "name": "PARKING GARAGE AT 2AM",
+    "file": "/compositions/15_parking_garage_2am.js",
+    "source": "local",
+    "bpm": 76,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:38:28.035Z",
+    "size": 2319
+  },
+  {
+    "id": "14_rust_never_sleeps",
+    "name": "RUST NEVER SLEEPS",
+    "file": "/compositions/14_rust_never_sleeps.js",
+    "source": "local",
+    "bpm": 48,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:38:27.011Z",
+    "size": 2529
+  },
+  {
+    "id": "13_static_cling",
+    "name": "STATIC CLING",
+    "file": "/compositions/13_static_cling.js",
+    "source": "local",
+    "bpm": 132,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:38:26.195Z",
+    "size": 2331
+  },
+  {
+    "id": "11_deep_fryer_meditation",
+    "name": "DEEP FRYER MEDITATION",
+    "file": "/compositions/11_deep_fryer_meditation.js",
+    "source": "local",
+    "bpm": 82,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:38:25.575Z",
+    "size": 2340
+  },
+  {
+    "id": "12_dialysis_machine",
+    "name": "DIALYSIS MACHINE",
+    "file": "/compositions/12_dialysis_machine.js",
+    "source": "local",
+    "bpm": 63,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:36:38.145Z",
+    "size": 2198
+  },
+  {
+    "id": "10_kudzu_takeover",
+    "name": "KUDZU TAKEOVER",
+    "file": "/compositions/10_kudzu_takeover.js",
+    "source": "local",
+    "bpm": 98,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:34:47.131Z",
+    "size": 2478
+  },
+  {
+    "id": "09_cathedral_of_teeth",
+    "name": "CATHEDRAL OF TEETH",
+    "file": "/compositions/09_cathedral_of_teeth.js",
+    "source": "local",
+    "bpm": 72,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:34:45.883Z",
+    "size": 2529
+  },
+  {
+    "id": "08_hemorrhage_funk",
+    "name": "HEMORRHAGE FUNK",
+    "file": "/compositions/08_hemorrhage_funk.js",
+    "source": "local",
+    "bpm": 116,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:34:44.915Z",
+    "size": 2297
+  },
+  {
+    "id": "07_amber_insect",
+    "name": "AMBER INSECT",
+    "file": "/compositions/07_amber_insect.js",
+    "source": "local",
+    "bpm": 42,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:34:44.183Z",
+    "size": 2451
+  },
+  {
+    "id": "06_seizure_protocol",
+    "name": "SEIZURE PROTOCOL",
+    "file": "/compositions/06_seizure_protocol.js",
+    "source": "local",
+    "bpm": 175,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:34:43.643Z",
+    "size": 2475
   },
   {
     "id": "05_bone_library",
@@ -196,18 +156,58 @@
     "source": "local",
     "bpm": 54,
     "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1034
+    "modifiedAt": "2025-12-30T16:32:38.229Z",
+    "size": 2365
   },
   {
-    "id": "20_last_blockbuster",
-    "name": "LAST BLOCKBUSTER",
-    "file": "/compositions/20_last_blockbuster.js",
+    "id": "04_wasp_factory",
+    "name": "WASP FACTORY",
+    "file": "/compositions/04_wasp_factory.js",
     "source": "local",
-    "bpm": 95,
+    "bpm": 144,
     "key": null,
-    "modifiedAt": "2025-12-30T14:49:04.880Z",
-    "size": 1240
+    "modifiedAt": "2025-12-30T16:32:37.365Z",
+    "size": 2421
+  },
+  {
+    "id": "03_liminal_mall",
+    "name": "LIMINAL MALL",
+    "file": "/compositions/03_liminal_mall.js",
+    "source": "local",
+    "bpm": 108,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:32:36.701Z",
+    "size": 2488
+  },
+  {
+    "id": "02_fermentation",
+    "name": "FERMENTATION",
+    "file": "/compositions/02_fermentation.js",
+    "source": "local",
+    "bpm": 93,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:32:36.213Z",
+    "size": 2389
+  },
+  {
+    "id": "01_gravitational_lensing",
+    "name": "GRAVITATIONAL LENSING",
+    "file": "/compositions/01_gravitational_lensing.js",
+    "source": "local",
+    "bpm": 67,
+    "key": null,
+    "modifiedAt": "2025-12-30T16:30:52.032Z",
+    "size": 2796
+  },
+  {
+    "id": "autumn_amber_descent",
+    "name": "Autumn: Amber Descent",
+    "file": "/compositions/autumn_amber_descent.js",
+    "source": "local",
+    "bpm": 85,
+    "key": null,
+    "modifiedAt": "2025-12-30T15:02:24.916Z",
+    "size": 1652
   },
   {
     "id": "synth-test",
