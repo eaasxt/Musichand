@@ -53,7 +53,7 @@ def augment_tempo(example):
     tempo_category = random.choice(list(TEMPOS.keys()))
     for tempo in TEMPOS[tempo_category]:
         new_example = deepcopy(example)
-        new_example['code'] = f"setcpm({tempo}/4)\n{code}"
+        new_example['code'] = f"setcpm({tempo}/4);\n{code}"
         new_example['description'] = f"{example['description']} at {tempo} BPM"
         new_example['augmentation'] = f"tempo_{tempo}"
         results.append(new_example)
@@ -199,7 +199,7 @@ def augment_combination(example):
         effect = random.choice(['.room(0.3)', '.delay(0.3).delaytime(0.25)'])
         new_code = code.rstrip()
         if new_code.endswith(')'):
-            new_code = f"setcpm({tempo}/4)\n{new_code}{effect}"
+            new_code = f"setcpm({tempo}/4);\n{new_code}{effect}"
             new_example = deepcopy(example)
             new_example['code'] = new_code
             new_example['description'] = f"{example['description']} at {tempo} BPM with effects"

@@ -1,7 +1,7 @@
 // Musicman Demo - Pure Synth Version (no samples needed)
 // A minor, 120 BPM
 
-setcpm(120/4)
+setcpm(120/4);
 
 stack(
   // Kick-like - low sine with fast attack
