@@ -1,1 +1,1 @@
-s("bd sd hh cp")
+bd sd hh cp
