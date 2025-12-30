@@ -88,6 +88,13 @@ export function stop() {
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
+  // Debug: check if analyser has data
+  if (masterAnalyser && Math.random() < 0.01) {
+    const testData = new Float32Array(masterAnalyser.frequencyBinCount);
+    masterAnalyser.getFloatTimeDomainData(testData);
+    const maxVal = Math.max(...testData.map(Math.abs));
+    console.log('[Musicman] Analyser check - bins:', masterAnalyser.frequencyBinCount, 'maxVal:', maxVal.toFixed(4));
+  }
   return masterAnalyser;
 }
 
