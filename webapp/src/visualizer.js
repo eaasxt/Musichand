@@ -166,6 +166,7 @@ export function createSpectrumViz(containerId) {
  */
 export function createBeatIndicator(containerId, bpm = 120) {
   let currentBPM = bpm;
+  let isPlaying = false;
 
   const sketch = new p5((p) => {
     let startTime = 0;
@@ -180,32 +181,45 @@ export function createBeatIndicator(containerId, bpm = 120) {
     p.draw = () => {
       p.background(20, 20, 30);
 
-      const msPerBeat = 60000 / currentBPM;
-      const elapsed = p.millis() - startTime;
-      const beatPosition = (elapsed % msPerBeat) / msPerBeat;
-      const cyclePosition = (elapsed % (msPerBeat * 4)) / (msPerBeat * 4);
+      // Check if audio is actually playing by looking for analyser
+      const analyser = analysers[WAVEFORM_ANALYSER_ID];
+      const hasAudio = analyser && isPlaying;
 
-      // Draw 16 step markers
       const steps = 16;
       const stepWidth = p.width / steps;
 
-      for (let i = 0; i < steps; i++) {
-        const x = i * stepWidth + stepWidth / 2;
-        const isDownbeat = i % 4 === 0;
-        const isCurrentStep = Math.floor(cyclePosition * 16) === i;
+      if (hasAudio) {
+        const msPerBeat = 60000 / currentBPM;
+        const elapsed = p.millis() - startTime;
+        const cyclePosition = (elapsed % (msPerBeat * 4)) / (msPerBeat * 4);
 
-        if (isCurrentStep) {
-          // Active step - bright
-          p.fill(233, 69, 96);
-          p.circle(x, p.height / 2, isDownbeat ? 16 : 12);
-        } else if (isDownbeat) {
-          // Downbeat marker
-          p.fill(80, 80, 100);
-          p.circle(x, p.height / 2, 10);
-        } else {
-          // Regular step
-          p.fill(50, 50, 60);
-          p.circle(x, p.height / 2, 6);
+        // Draw 16 step markers - animated when playing
+        for (let i = 0; i < steps; i++) {
+          const x = i * stepWidth + stepWidth / 2;
+          const isDownbeat = i % 4 === 0;
+          const isCurrentStep = Math.floor(cyclePosition * 16) === i;
+
+          if (isCurrentStep) {
+            // Active step - bright
+            p.fill(233, 69, 96);
+            p.circle(x, p.height / 2, isDownbeat ? 16 : 12);
+          } else if (isDownbeat) {
+            // Downbeat marker
+            p.fill(80, 80, 100);
+            p.circle(x, p.height / 2, 10);
+          } else {
+            // Regular step
+            p.fill(50, 50, 60);
+            p.circle(x, p.height / 2, 6);
+          }
+        }
+      } else {
+        // Not playing - draw static dim markers
+        for (let i = 0; i < steps; i++) {
+          const x = i * stepWidth + stepWidth / 2;
+          const isDownbeat = i % 4 === 0;
+          p.fill(isDownbeat ? 60 : 40, isDownbeat ? 60 : 40, isDownbeat ? 70 : 50);
+          p.circle(x, p.height / 2, isDownbeat ? 8 : 5);
         }
       }
 
@@ -234,6 +248,11 @@ export function createBeatIndicator(containerId, bpm = 120) {
   // Add setBPM method to the sketch
   sketch.setBPM = (newBPM) => {
     currentBPM = newBPM;
+  };
+
+  // Add setPlaying method to control animation
+  sketch.setPlaying = (playing) => {
+    isPlaying = playing;
   };
 
   return sketch;

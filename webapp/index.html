@@ -571,6 +571,9 @@
         setStatus('playing', 'Playing...');
         await play(code);
         isPlaying = true;
+        if (visualizations.beat) {
+          visualizations.beat.setPlaying(true);
+        }
       } catch (err) {
         console.error('Playback error:', err);
         setStatus('error', 'Error: ' + err.message);
@@ -582,6 +585,9 @@
       stop();
       isPlaying = false;
       setStatus('stopped', 'Stopped');
+      if (visualizations.beat) {
+        visualizations.beat.setPlaying(false);
+      }
     }
 
     // Update status display

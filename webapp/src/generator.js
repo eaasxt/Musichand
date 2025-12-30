@@ -2,6 +2,7 @@
  * Musicman Generator - AI-powered music generation
  *
  * Uses Strudel for live audio playback with AI generation API.
+ * Supports multitrack composition and pattern library.
  */
 
 import { repl, controls } from '@strudel/core';
@@ -12,6 +13,35 @@ import { registerSynthSounds, registerZZFXSounds } from '@strudel/webaudio';
 // Configuration
 const API_URL = 'http://localhost:8080';
 
+// Pattern library (subset for quick access)
+const PATTERNS = {
+  drums: [
+    { name: "4x4 Kick", code: 's("bd*4")' },
+    { name: "House", code: 's("bd*4, ~ sd ~ sd, hh*8")' },
+    { name: "Techno", code: 's("bd*4, ~ sd:2 ~ sd:2, hh(5,8)")' },
+    { name: "Breakbeat", code: 's("bd ~ ~ bd ~ ~ bd ~, ~ ~ sd ~ ~ ~ ~ sd")' },
+    { name: "Trap", code: 's("bd ~ ~ ~ bd ~ ~ bd, ~ ~ ~ ~ sd ~ ~ ~, hh*16")' },
+    { name: "Minimal", code: 's("bd*4, hh(3,8)")' },
+  ],
+  bass: [
+    { name: "Sub", code: 'n("0*4").scale("C:minor").s("sine").lpf(200)' },
+    { name: "Pulsing", code: 'n("0 0 0 12").scale("C:minor").s("sawtooth").lpf(400)' },
+    { name: "Walking", code: 'n("0 3 5 7").scale("C:minor").s("triangle").lpf(300)' },
+    { name: "Acid", code: 'n("0 0 7 0 5 0 3 0").scale("C:minor").s("sawtooth").lpf(sine.range(200,2000).fast(4))' },
+  ],
+  chords: [
+    { name: "Minor Pad", code: 'chord("<Cm Fm>").voicing().s("triangle").lpf(800)' },
+    { name: "Jazz ii-V-I", code: 'chord("<Dm7 G7 Cmaj7 Cmaj7>").voicing().s("triangle").lpf(1200)' },
+    { name: "Ambient", code: 'chord("<Am Em Dm Am>").voicing().s("triangle").room(0.5).lpf(600)' },
+    { name: "House Stabs", code: 'chord("<Cm7 Fm7 Gm7 Cm7>").voicing().s("sawtooth").lpf(600).gain(0.5)' },
+  ],
+  leads: [
+    { name: "Minor Scale", code: 'n("0 2 3 5 7 5 3 2").scale("C:minor").s("triangle").lpf(1500)' },
+    { name: "Arp", code: 'n("0 3 5 7 10 7 5 3").scale("C:minor").s("sawtooth").lpf(2000).fast(2)' },
+    { name: "Floating", code: 'n("0 ~ 4 ~ 7 ~ 4 ~").scale("C:minor").s("sine").room(0.4).slow(2)' },
+  ],
+};
+
 // DOM elements
 const codeDisplay = document.getElementById('code');
 const statusEl = document.getElementById('status');
@@ -20,16 +50,27 @@ const stopBtn = document.getElementById('stopBtn');
 const reloadBtn = document.getElementById('reloadBtn');
 const errorContainer = document.getElementById('error-container');
 
-// AI Generation elements
 const promptInput = document.getElementById('promptInput');
 const generateBtn = document.getElementById('generateBtn');
 const generateStatus = document.getElementById('generate-status');
 const quickPrompts = document.querySelectorAll('.quick-prompt');
 
+const genreSelect = document.getElementById('genreSelect');
+const keySelect = document.getElementById('keySelect');
+const modeSelect = document.getElementById('modeSelect');
+const multitrackToggle = document.getElementById('multitrackToggle');
+const llmToggle = document.getElementById('llmToggle');
+
+const patternTabs = document.querySelectorAll('.pattern-tab');
+const patternList = document.getElementById('pattern-list');
+
 // State
 let evaluate = null;
 let isPlaying = false;
 let currentCode = '';
+let useMultitrack = true;
+let useLLM = false;
+let currentPatternCategory = 'drums';
 
 // Initialize audio
 initAudioOnFirstClick();
@@ -45,7 +86,6 @@ async function initStrudel() {
     });
     evaluate = result.evaluate;
 
-    // Register built-in sounds
     await registerSynthSounds();
 
     return evaluate;
@@ -55,16 +95,85 @@ async function initStrudel() {
   }
 }
 
+// ========== Pattern Library ==========
+
+function renderPatterns(category) {
+  const patterns = PATTERNS[category] || [];
+  patternList.innerHTML = patterns.map(p => 
+    `<div class="pattern-item" data-code="${encodeURIComponent(p.code)}">${p.name}</div>`
+  ).join('');
+  
+  // Add click handlers
+  patternList.querySelectorAll('.pattern-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const code = decodeURIComponent(item.dataset.code);
+      insertPattern(code);
+    });
+  });
+}
+
+function insertPattern(code) {
+  // If we have existing code, add as new layer
+  if (currentCode && currentCode.includes('stack(')) {
+    // Insert before the closing paren of stack
+    currentCode = currentCode.replace(/\)(\s*)$/, ',\n  ' + code + '\n)$1');
+  } else if (currentCode && currentCode.trim()) {
+    // Wrap in stack
+    currentCode = 'stack(\n  ' + currentCode.trim() + ',\n  ' + code + '\n)';
+  } else {
+    currentCode = code;
+  }
+  codeDisplay.textContent = currentCode;
+  generateStatus.innerHTML = '<div class="success-msg">Pattern added! Click Play to hear it.</div>';
+}
+
 // ========== AI Generation ==========
 
-async function generateCode(prompt) {
+function buildPrompt() {
+  let prompt = promptInput.value.trim();
+  
+  // Add genre if selected
+  const genre = genreSelect.value;
+  if (genre && !prompt.toLowerCase().includes(genre)) {
+    prompt = genre + ' ' + prompt;
+  }
+  
+  // Add key if selected
+  const key = keySelect.value;
+  if (key && !prompt.toLowerCase().includes(key.toLowerCase())) {
+    prompt += ' in ' + key;
+  }
+  
+  // Add mode if selected
+  const mode = modeSelect.value;
+  if (mode && !prompt.toLowerCase().includes(mode)) {
+    prompt += ' ' + mode;
+  }
+  
+  return prompt;
+}
+
+async function generateCode() {
+  const prompt = buildPrompt();
+  if (!prompt) {
+    generateStatus.innerHTML = '<div class="error-msg">Please enter a description</div>';
+    return;
+  }
+
   generateBtn.disabled = true;
   generateBtn.textContent = 'Generating...';
   generateBtn.classList.add('loading');
   generateStatus.innerHTML = '';
 
   try {
-    const url = API_URL + '/generate?q=' + encodeURIComponent(prompt);
+    // Choose endpoint based on toggle
+    const endpoint = useMultitrack ? '/multitrack' : '/generate';
+    const params = new URLSearchParams({ q: prompt });
+    if (useLLM && useMultitrack) {
+      params.append('llm', 'true');
+    }
+    
+    const url = API_URL + endpoint + '?' + params;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -81,8 +190,9 @@ async function generateCode(prompt) {
     currentCode = data.output;
     codeDisplay.textContent = currentCode;
 
-    // Show success
-    generateStatus.innerHTML = '<div class="success-msg">Generated! Click Play to hear it.</div>';
+    // Show success with method info
+    const method = data.method ? ' (' + data.method + ')' : '';
+    generateStatus.innerHTML = '<div class="success-msg">Generated' + method + '! Click Play to hear it.</div>';
     clearError();
 
     return data.output;
@@ -98,8 +208,8 @@ async function generateCode(prompt) {
   }
 }
 
-async function generateAndPlay(prompt) {
-  const code = await generateCode(prompt);
+async function generateAndPlay() {
+  const code = await generateCode();
   if (code) {
     await playCode(code);
   }
@@ -111,7 +221,6 @@ async function playCode(code) {
   const eval_ = await initStrudel();
   if (!eval_) return;
 
-  // Stop existing playback
   if (isPlaying) {
     stop();
     await new Promise(r => setTimeout(r, 100));
@@ -155,7 +264,6 @@ async function loadComposition() {
     clearError();
     return code;
   } catch (err) {
-    // Silent fail - composition file is optional now
     console.log('No composition file, using AI generation');
     return null;
   }
@@ -196,20 +304,23 @@ stopBtn.addEventListener('click', stop);
 reloadBtn.addEventListener('click', reload);
 
 // Generation
-generateBtn.addEventListener('click', () => {
-  const prompt = promptInput.value.trim();
-  if (prompt) {
-    generateCode(prompt);
-  }
-});
+generateBtn.addEventListener('click', generateCode);
 
 promptInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
-    const prompt = promptInput.value.trim();
-    if (prompt) {
-      generateCode(prompt);
-    }
+    generateCode();
   }
+});
+
+// Toggles
+multitrackToggle.addEventListener('click', () => {
+  useMultitrack = !useMultitrack;
+  multitrackToggle.classList.toggle('active', useMultitrack);
+});
+
+llmToggle.addEventListener('click', () => {
+  useLLM = !useLLM;
+  llmToggle.classList.toggle('active', useLLM);
 });
 
 // Quick prompts
@@ -217,30 +328,40 @@ quickPrompts.forEach(btn => {
   btn.addEventListener('click', () => {
     const prompt = btn.dataset.prompt;
     promptInput.value = prompt;
-    generateCode(prompt);
+    generateCode();
+  });
+});
+
+// Pattern tabs
+patternTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    patternTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentPatternCategory = tab.dataset.category;
+    renderPatterns(currentPatternCategory);
   });
 });
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-  // Space to play/stop (when not in input)
   if (e.key === ' ' && e.target !== promptInput) {
     e.preventDefault();
     isPlaying ? stop() : play();
   }
-  // Ctrl+R to reload
   if (e.key === 'r' && e.ctrlKey) {
     e.preventDefault();
     reload();
   }
-  // Ctrl+Enter to generate and play
   if (e.key === 'Enter' && e.ctrlKey && promptInput.value.trim()) {
     e.preventDefault();
-    generateAndPlay(promptInput.value.trim());
+    generateAndPlay();
   }
 });
 
 // ========== Initialization ==========
+
+// Render initial patterns
+renderPatterns('drums');
 
 // Try to load existing composition
 loadComposition();
@@ -250,11 +371,13 @@ fetch(API_URL + '/health')
   .then(r => r.json())
   .then(data => {
     console.log('API connected:', data);
-    generateStatus.innerHTML = '<div class="success-msg">API connected (' + data.model + ')</div>';
+    const features = data.features ? data.features.join(', ') : 'generate';
+    generateStatus.innerHTML = '<div class="success-msg">API connected (' + data.model + ') - ' + features + '</div>';
     setTimeout(() => { generateStatus.innerHTML = ''; }, 3000);
   })
   .catch(() => {
-    console.warn('API not available - start with: python3 ~/Musicman/scripts/api_server.py');
+    console.warn('API not available - start with: ~/Musicman/scripts/restart_api.sh');
+    generateStatus.innerHTML = '<div class="error-msg">API offline - run restart_api.sh</div>';
   });
 
 // HMR support
