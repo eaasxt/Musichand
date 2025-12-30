@@ -1,5 +1,245 @@
 [
   {
+    "id": "01_gravitational_lensing",
+    "name": "GRAVITATIONAL LENSING",
+    "file": "/compositions/01_gravitational_lensing.js",
+    "source": "local",
+    "bpm": 67,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1094
+  },
+  {
+    "id": "02_fermentation",
+    "name": "FERMENTATION",
+    "file": "/compositions/02_fermentation.js",
+    "source": "local",
+    "bpm": 93,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1129
+  },
+  {
+    "id": "03_liminal_mall",
+    "name": "LIMINAL MALL",
+    "file": "/compositions/03_liminal_mall.js",
+    "source": "local",
+    "bpm": 108,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1133
+  },
+  {
+    "id": "04_wasp_factory",
+    "name": "WASP FACTORY",
+    "file": "/compositions/04_wasp_factory.js",
+    "source": "local",
+    "bpm": 144,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1028
+  },
+  {
+    "id": "05_bone_library",
+    "name": "BONE LIBRARY",
+    "file": "/compositions/05_bone_library.js",
+    "source": "local",
+    "bpm": 54,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1034
+  },
+  {
+    "id": "06_seizure_protocol",
+    "name": "SEIZURE PROTOCOL",
+    "file": "/compositions/06_seizure_protocol.js",
+    "source": "local",
+    "bpm": 175,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1232
+  },
+  {
+    "id": "07_amber_insect",
+    "name": "AMBER INSECT",
+    "file": "/compositions/07_amber_insect.js",
+    "source": "local",
+    "bpm": 42,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1053
+  },
+  {
+    "id": "08_hemorrhage_funk",
+    "name": "HEMORRHAGE FUNK",
+    "file": "/compositions/08_hemorrhage_funk.js",
+    "source": "local",
+    "bpm": 116,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1057
+  },
+  {
+    "id": "09_cathedral_of_teeth",
+    "name": "CATHEDRAL OF TEETH",
+    "file": "/compositions/09_cathedral_of_teeth.js",
+    "source": "local",
+    "bpm": 72,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1028
+  },
+  {
+    "id": "10_kudzu_takeover",
+    "name": "KUDZU TAKEOVER",
+    "file": "/compositions/10_kudzu_takeover.js",
+    "source": "local",
+    "bpm": 98,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1133
+  },
+  {
+    "id": "11_deep_fryer_meditation",
+    "name": "DEEP FRYER MEDITATION",
+    "file": "/compositions/11_deep_fryer_meditation.js",
+    "source": "local",
+    "bpm": 82,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1031
+  },
+  {
+    "id": "12_dialysis_machine",
+    "name": "DIALYSIS MACHINE",
+    "file": "/compositions/12_dialysis_machine.js",
+    "source": "local",
+    "bpm": 63,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1119
+  },
+  {
+    "id": "13_static_cling",
+    "name": "STATIC CLING",
+    "file": "/compositions/13_static_cling.js",
+    "source": "local",
+    "bpm": 132,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1064
+  },
+  {
+    "id": "14_rust_never_sleeps",
+    "name": "RUST NEVER SLEEPS",
+    "file": "/compositions/14_rust_never_sleeps.js",
+    "source": "local",
+    "bpm": 48,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1267
+  },
+  {
+    "id": "15_parking_garage_2am",
+    "name": "PARKING GARAGE AT 2AM",
+    "file": "/compositions/15_parking_garage_2am.js",
+    "source": "local",
+    "bpm": 76,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1159
+  },
+  {
+    "id": "16_bioluminescence",
+    "name": "BIOLUMINESCENCE",
+    "file": "/compositions/16_bioluminescence.js",
+    "source": "local",
+    "bpm": 58,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1251
+  },
+  {
+    "id": "17_insomnia_arithmetic",
+    "name": "INSOMNIA ARITHMETIC",
+    "file": "/compositions/17_insomnia_arithmetic.js",
+    "source": "local",
+    "bpm": 147,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1157
+  },
+  {
+    "id": "18_mycelium_network",
+    "name": "MYCELIUM NETWORK",
+    "file": "/compositions/18_mycelium_network.js",
+    "source": "local",
+    "bpm": 66,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1190
+  },
+  {
+    "id": "19_vending_machine_requiem",
+    "name": "VENDING MACHINE REQUIEM",
+    "file": "/compositions/19_vending_machine_requiem.js",
+    "source": "local",
+    "bpm": 88,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1118
+  },
+  {
+    "id": "20_last_blockbuster",
+    "name": "LAST BLOCKBUSTER",
+    "file": "/compositions/20_last_blockbuster.js",
+    "source": "local",
+    "bpm": 95,
+    "key": null,
+    "modifiedAt": "2025-12-30T14:49:04.881Z",
+    "size": 1240
+  },
+  {
+    "id": "synth-test",
+    "name": "Synth Test - No Samples Required",
+    "file": "/compositions/synth-test.js",
+    "source": "local",
+    "bpm": 120,
+    "key": null,
+    "modifiedAt": "2025-12-30T06:56:19.638Z",
+    "size": 518
+  },
+  {
+    "id": "current",
+    "name": "Musicman Demo Composition",
+    "file": "/compositions/current.js",
+    "source": "local",
+    "bpm": 120,
+    "key": null,
+    "modifiedAt": "2025-12-30T06:55:49.625Z",
+    "size": 661
+  },
+  {
+    "id": "current copy",
+    "name": "Basic 4-bar beat pattern",
+    "file": "/compositions/current copy.js",
+    "source": "local",
+    "bpm": 120,
+    "key": null,
+    "modifiedAt": "2025-12-30T06:47:31.370Z",
+    "size": 1036
+  },
+  {
+    "id": "beat-pattern-909",
+    "name": "Basic 4-bar beat pattern",
+    "file": "/compositions/beat-pattern-909.js",
+    "source": "local",
+    "bpm": 120,
+    "key": null,
+    "modifiedAt": "2025-12-30T06:46:49.973Z",
+    "size": 1036
+  },
+  {
     "id": "autumn_amber_descent",
     "name": "Autumn: Amber Descent",
     "file": "/compositions/autumn_amber_descent.js",
@@ -48,35 +288,5 @@
     "key": null,
     "modifiedAt": "2025-12-30T05:47:17.989Z",
     "size": 1230
-  },
-  {
-    "id": "current copy",
-    "name": "Basic 4-bar beat pattern",
-    "file": "/compositions/current copy.js",
-    "source": "local",
-    "bpm": 120,
-    "key": null,
-    "modifiedAt": "2025-12-30T04:56:08.247Z",
-    "size": 1130
-  },
-  {
-    "id": "beat-pattern-909",
-    "name": "Basic 4-bar beat pattern",
-    "file": "/compositions/beat-pattern-909.js",
-    "source": "local",
-    "bpm": 120,
-    "key": null,
-    "modifiedAt": "2025-12-30T04:52:49.796Z",
-    "size": 1130
-  },
-  {
-    "id": "current",
-    "name": "Musicman Demo Composition",
-    "file": "/compositions/current.js",
-    "source": "local",
-    "bpm": 120,
-    "key": null,
-    "modifiedAt": "2025-12-30T04:29:42.902Z",
-    "size": 668
   }
 ]
