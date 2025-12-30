@@ -5,7 +5,7 @@ setcpm(54)
 
 stack(
   // Vertebrae percussion - clicking, hollow
-  s("<[rim ~] [~ rim ~] [rim rim ~]> <[~ rim] [rim ~ rim] [~ ~ rim]>")
+  s("<[cp ~] [~ cp ~] [cp cp ~]> <[~ cp] [cp ~ cp] [~ ~ cp]>")
     .room(0.85)
     .size(10)
     .gain(0.5)
@@ -24,7 +24,7 @@ stack(
   // Skull choir - whispered harmonics
   n("[0, 3, 7, 11]")
     .scale("B2:phrygian")
-    .s("gm_choir_aahs")
+    .s("triangle")
     .attack(1.5)
     .release(3)
     .lpf(1200)
@@ -36,7 +36,7 @@ stack(
   // Finger bones on ancient texts
   n(irand(7).segment(5))
     .scale("B4:phrygian")
-    .s("gm_celesta")
+    .s("triangle")
     .gain(0.3)
     .room(0.8)
     .delay(0.5)

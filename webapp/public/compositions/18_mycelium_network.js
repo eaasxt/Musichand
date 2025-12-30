@@ -42,7 +42,7 @@ stack(
     .slow(16),
 
   // Decomposition rhythms - slow breakdown
-  s("~ rim:2? ~ ~ rim:2 ~ ~ ~")
+  s("~ cp? ~ ~ cp ~ ~ ~")
     .speed(0.7)
     .room(0.7)
     .gain(0.3)
@@ -51,7 +51,7 @@ stack(
   // Tree roots receiving messages
   n("<0 ~ 2 ~> <~ 4 ~ 5>")
     .scale("E2:dorian")
-    .s("gm_acoustic_bass")
+    .s("sawtooth")
     .lpf(400)
     .gain(0.4)
     .slow(2)

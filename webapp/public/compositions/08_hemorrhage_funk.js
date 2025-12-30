@@ -34,7 +34,7 @@ stack(
     .every(4, x => x.fast(2)),
 
   // Iron in the blood - metallic shimmer
-  s("~ ~ ~ rim")
+  s("~ ~ ~ cp")
     .speed(1.2)
     .gain(0.5)
     .room(0.5)

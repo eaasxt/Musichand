@@ -19,7 +19,7 @@ stack(
     .slow(16),
 
   // Selection buttons being pressed
-  s("~ ~ rim? ~")
+  s("~ ~ cp? ~")
     .gain(0.4)
     .room(0.5)
     .sometimes(x => x.fast(2)),
@@ -27,7 +27,7 @@ stack(
   // Spiral rotation - item falling
   n("[2 4 5 7]")
     .scale("F3:major")
-    .s("gm_music_box")
+    .s("triangle")
     .gain(0.35)
     .room(0.6)
     .every(4, x => x.fast(2))
@@ -52,7 +52,7 @@ stack(
   // The glow of possibility
   n("<[0, 4, 7] [2, 5, 9]>")
     .scale("F3:major")
-    .s("gm_pad_warm")
+    .s("sine")
     .attack(0.5)
     .release(2)
     .lpf(1500)

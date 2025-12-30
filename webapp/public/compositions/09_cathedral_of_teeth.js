@@ -7,7 +7,7 @@ stack(
   // Enamel bells
   n("<[0 4 7] [2 5 9] [4 7 11] [0 4 7]>")
     .scale("D:mixolydian")
-    .s("gm_tubular_bells")
+    .s("sine")
     .room(0.9)
     .size(12)
     .gain(0.5)
@@ -34,7 +34,7 @@ stack(
   // Choir of extracted wisdom
   n("<0 2 4 5 7 5 4 2>")
     .scale("D3:mixolydian")
-    .s("gm_choir_aahs")
+    .s("triangle")
     .attack(0.8)
     .release(2)
     .lpf(1500)
@@ -43,7 +43,7 @@ stack(
     .slow(1.5),
 
   // Clicking jaw bones
-  s("rim? ~ rim ~ ~ rim? ~ rim")
+  s("cp? ~ cp ~ ~ cp? ~ cp")
     .room(0.7)
     .gain(0.4)
     .hpf(800),

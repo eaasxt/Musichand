@@ -38,7 +38,7 @@ stack(
   // Microwave popcorn melody
   n(perlin.range(0, 7).segment(6))
     .scale("A4:mixolydian")
-    .s("gm_vibraphone")
+    .s("triangle")
     .gain(0.3)
     .room(0.6)
     .delay(0.3)
@@ -56,7 +56,7 @@ stack(
   // The closing time announcement
   n("[0, 4, 7]")
     .scale("A2:major")
-    .s("gm_voice_oohs")
+    .s("triangle")
     .attack(1)
     .release(3)
     .lpf(1200)

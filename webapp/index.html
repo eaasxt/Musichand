@@ -330,7 +330,15 @@
       font-family: monospace;
     }
 
-    /* Editor section */
+    /* Main content area - horizontal split */
+    .content-area {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Editor section - takes most space */
     .editor-section {
       flex: 1;
       display: flex;
@@ -341,25 +349,32 @@
 
     #editor-container {
       flex: 1;
-      min-height: 200px;
+      min-height: 300px;
       overflow: hidden;
     }
 
-    /* Visualizations */
+    /* Visualizations - right side panel */
     .visualizations {
-      background: #12121a;
-      border-top: 1px solid #2a2a4a;
-      padding: 0.5rem;
+      width: 200px;
       flex-shrink: 0;
-      max-height: 250px;
+      background: #12121a;
+      border-left: 1px solid #2a2a4a;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .viz-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: #666;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
     }
 
     .viz-row {
-      margin-bottom: 0.5rem;
-    }
-
-    .viz-row:last-child {
-      margin-bottom: 0;
+      flex-shrink: 0;
     }
 
     #viz-waveform {
@@ -367,11 +382,12 @@
     }
 
     #viz-spectrum {
-      height: 100px;
+      flex: 1;
+      min-height: 120px;
     }
 
     #viz-beat {
-      height: 40px;
+      height: 50px;
     }
 
     #viz-waveform,
@@ -424,6 +440,13 @@
       z-index: 1000;
     }
 
+    /* Tablet responsive */
+    @media (max-width: 900px) {
+      .visualizations {
+        width: 150px;
+      }
+    }
+
     /* Mobile responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -461,6 +484,34 @@
       }
 
       .keyboard-hint {
+        display: none;
+      }
+
+      /* Stack visualizations below editor on mobile */
+      .content-area {
+        flex-direction: column;
+      }
+
+      .visualizations {
+        width: 100%;
+        flex-direction: row;
+        border-left: none;
+        border-top: 1px solid #2a2a4a;
+        height: 80px;
+        padding: 0.25rem;
+      }
+
+      .viz-row {
+        flex: 1;
+      }
+
+      #viz-waveform,
+      #viz-spectrum,
+      #viz-beat {
+        height: 100%;
+      }
+
+      .viz-label {
         display: none;
       }
     }
@@ -519,14 +570,25 @@
         </div>
       </div>
 
-      <div class="editor-section">
-        <div id="editor-container"></div>
-      </div>
+      <div class="content-area">
+        <div class="editor-section">
+          <div id="editor-container"></div>
+        </div>
 
-      <div class="visualizations">
-        <div class="viz-row" id="viz-waveform"></div>
-        <div class="viz-row" id="viz-spectrum"></div>
-        <div class="viz-row" id="viz-beat"></div>
+        <div class="visualizations">
+          <div class="viz-row">
+            <div class="viz-label">Waveform</div>
+            <div id="viz-waveform"></div>
+          </div>
+          <div class="viz-row">
+            <div class="viz-label">Spectrum</div>
+            <div id="viz-spectrum"></div>
+          </div>
+          <div class="viz-row">
+            <div class="viz-label">Beat</div>
+            <div id="viz-beat"></div>
+          </div>
+        </div>
       </div>
     </main>
   </div>

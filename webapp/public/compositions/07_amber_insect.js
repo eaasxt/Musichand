@@ -7,7 +7,7 @@ stack(
   // The last wingbeat, crystallized forever
   n("[0, 4, 7] ~ ~ [0, 3, 7] ~ ~ ~ ~")
     .scale("A:lydian")
-    .s("gm_pad_warm")
+    .s("sine")
     .attack(2)
     .release(4)
     .room(0.95)

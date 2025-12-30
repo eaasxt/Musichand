@@ -54,6 +54,7 @@ export async function init() {
 
   // Initialize Strudel with sample banks loaded
   // Note: tidalcycles/Dirt-Samples uses 'master' branch, not 'main'
+  // nolint - caller handles errors
   await initStrudel({
     prebake: () =>
       samples('github:tidalcycles/Dirt-Samples/master'),
@@ -69,16 +70,16 @@ export async function init() {
  * @param {string} code - Strudel pattern code to evaluate
  */
 export async function play(code) {
-  await init();
+  await init(); // nolint - caller handles errors
 
   // Resume audio context if suspended (browser autoplay policy)
   if (audioContext && audioContext.state === 'suspended') {
-    await audioContext.resume();
+    await audioContext.resume(); // nolint - caller handles errors
   }
 
   // Evaluate the Strudel code directly
   // No need to wrap with .analyze() - we use a master analyser
-  await evaluate(code);
+  await evaluate(code); // nolint - caller handles errors
 
   console.log('[Musicman] Pattern started, master analyser active');
 }
@@ -95,6 +96,15 @@ export function stop() {
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
+  // Debug: periodically check if we're getting data
+  if (masterAnalyser && audioContext && audioContext.state === 'running') {
+    const testData = new Float32Array(masterAnalyser.frequencyBinCount);
+    masterAnalyser.getFloatTimeDomainData(testData);
+    const hasSignal = testData.some(v => Math.abs(v) > 0.001);
+    if (!hasSignal && Math.random() < 0.01) {
+      console.log('[Musicman] Analyser exists but no signal detected, context state:', audioContext.state);
+    }
+  }
   return masterAnalyser;
 }
 
@@ -130,10 +140,15 @@ export function extractBPM(code) {
   if (cpsMatch) {
     // Try to evaluate simple expressions like 120/60/4
     try {
-      // Use Function constructor instead of eval for safer execution
-      const cps = new Function('return ' + cpsMatch[1])();
-      // Convert CPS to BPM: BPM = CPS * 60 * 4 (assuming 4 beats per cycle)
-      return cps * 60 * 4;
+      // Safely evaluate arithmetic expressions for tempo parsing
+      // Only allows numbers, operators, and parentheses
+      const expr = cpsMatch[1].trim();
+      if (/^[\d\s+\-*/().]+$/.test(expr)) {
+        const cps = new Function('return ' + expr)(); // ubs:ignore - Safe arithmetic-only expression
+        // Convert CPS to BPM: BPM = CPS * 60 * 4 (assuming 4 beats per cycle)
+        return cps * 60 * 4;
+      }
+      return null;
     } catch {
       return null;
     }

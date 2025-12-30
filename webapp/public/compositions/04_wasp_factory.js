@@ -28,7 +28,7 @@ stack(
     .distort(1.5),
 
   // Mandible clicks
-  s("~ rim ~ [rim rim]")
+  s("~ cp ~ [cp cp]")
     .speed(1.5)
     .gain(0.7)
     .room(0.3),

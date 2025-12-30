@@ -57,7 +57,7 @@ stack(
   // Elevator ding - distant hope
   n("11")
     .scale("E5:minor")
-    .s("gm_vibraphone")
+    .s("triangle")
     .room(0.95)
     .gain(0.15)
     .slow(16)

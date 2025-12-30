@@ -30,14 +30,14 @@ stack(
     .slow(4),
 
   // Timer countdown meditation
-  s("~ ~ ~ rim")
+  s("~ ~ ~ cp")
     .room(0.6)
     .gain(0.4),
 
   // Golden brown transcendence
   n("<0 2 4 5 7 9 11 12>".slow(8))
     .scale("Bb3:major")
-    .s("gm_vibraphone")
+    .s("triangle")
     .room(0.7)
     .gain(0.35)
     .delay(0.4)

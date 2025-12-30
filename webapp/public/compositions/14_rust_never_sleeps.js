@@ -19,7 +19,7 @@ stack(
   // Flakes falling off
   n(perlin.range(0, 7).segment(5))
     .scale("D4:minor")
-    .s("gm_celesta")
+    .s("triangle")
     .gain(perlin.range(0.1, 0.3))
     .room(0.8)
     .delay(0.5)

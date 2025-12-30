@@ -15,7 +15,7 @@ stack(
   // Muzak melody - vaguely familiar, deeply unsettling
   n("<[0 2 4] [4 2 0] [2 4 7] [7 4 2]>")
     .scale("G:major")
-    .s("gm_vibraphone")
+    .s("triangle")
     .room(0.8)
     .gain(0.4)
     .lpf(2500)

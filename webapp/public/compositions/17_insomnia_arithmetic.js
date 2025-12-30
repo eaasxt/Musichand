@@ -29,7 +29,7 @@ stack(
     .gain(0.35),
 
   // Clock ticking - relentless
-  s("rim*4")
+  s("cp*4")
     .gain(0.3)
     .hpf(2000)
     .room(0.3),
@@ -45,7 +45,7 @@ stack(
   // Brief moments of almost-sleep
   n("<[0, 4, 7] ~ ~ ~>")
     .scale("C3:major")
-    .s("gm_pad_warm")
+    .s("sine")
     .attack(0.5)
     .release(2)
     .room(0.8)

@@ -30,7 +30,7 @@ stack(
     .delayfeedback(0.3),
 
   // Zipper clicks
-  s("~ rim? ~ [rim rim]?")
+  s("~ cp? ~ [cp cp]?")
     .gain(0.35)
     .hpf(3000)
     .room(0.3),
