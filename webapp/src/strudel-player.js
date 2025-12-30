@@ -6,14 +6,14 @@
 import { initStrudel, evaluate, hush, samples } from '@strudel/web';
 import {
   getAudioContext as getSuperdoughContext,
-  setDefaultAudioContext,
+  getAnalyzerById,
 } from 'superdough';
 
 let initialized = false;
-
-// Master analyser that captures ALL audio output
-let masterAnalyser = null;
 let audioContext = null;
+
+// Analyzer ID used for all patterns
+const ANALYZER_ID = 'musicman';
 
 /**
  * Initialize Strudel and audio analysis
@@ -21,46 +21,17 @@ let audioContext = null;
 export async function init() {
   if (initialized) return;
 
-  // Create our own AudioContext first
-  audioContext = new AudioContext();
-
-  // Create analyser node
-  masterAnalyser = audioContext.createAnalyser();
-  masterAnalyser.fftSize = 2048;
-  masterAnalyser.smoothingTimeConstant = 0.8;
-
-  // Connect analyser to destination (parallel listener)
-  // We'll also create a custom destination that routes through analyser
-  masterAnalyser.connect(audioContext.destination);
-
-  // Create a gain node as the "fake destination" for superdough
-  const fakeDestination = audioContext.createGain();
-  fakeDestination.connect(masterAnalyser);
-
-  // Patch the audio context's destination getter to return our fake destination
-  // This is a workaround since we can't change the real destination
-  const patchedContext = Object.create(audioContext, {
-    destination: {
-      get: () => fakeDestination,
-      enumerable: true,
-      configurable: true
-    }
-  });
-
-  // Set our patched context as superdough's default
-  setDefaultAudioContext(patchedContext);
-
-  console.log('[Musicman] Created patched AudioContext with analyser');
-
   // Initialize Strudel with sample banks loaded
   // Note: tidalcycles/Dirt-Samples uses 'master' branch, not 'main'
-  // nolint - caller handles errors
   await initStrudel({
     prebake: () =>
       samples('github:tidalcycles/Dirt-Samples/master'),
   });
 
-  console.log('[Musicman] Strudel initialized with master analyser');
+  // Get the audio context that superdough created
+  audioContext = getSuperdoughContext();
+
+  console.log('[Musicman] Strudel initialized');
 
   initialized = true;
 }
@@ -77,11 +48,64 @@ export async function play(code) {
     await audioContext.resume(); // nolint - caller handles errors
   }
 
-  // Evaluate the Strudel code directly
-  // No need to wrap with .analyze() - we use a master analyser
-  await evaluate(code); // nolint - caller handles errors
+  // Wrap the code to add .analyze() for visualization
+  // This injects analyze at the end of the pattern chain
+  const wrappedCode = wrapCodeWithAnalyze(code, ANALYZER_ID);
 
-  console.log('[Musicman] Pattern started, master analyser active');
+  // Evaluate the wrapped Strudel code
+  await evaluate(wrappedCode); // nolint - caller handles errors
+
+  console.log('[Musicman] Pattern started with analyzer:', ANALYZER_ID);
+}
+
+/**
+ * Wrap Strudel code to add .analyze() for visualization
+ * @param {string} code - Original Strudel code
+ * @param {string} analyzerId - The analyzer ID to use
+ * @returns {string} - Modified code with .analyze() added
+ */
+function wrapCodeWithAnalyze(code, analyzerId) {
+  // Strategy: Find the last closing paren/bracket of the main pattern
+  // and insert .analyze() before any trailing content
+
+  // First, check if the code already has .analyze()
+  if (code.includes('.analyze(')) {
+    return code;
+  }
+
+  // Find the main pattern - usually ends with a closing paren
+  // We need to find the last ) that's part of the pattern, not a comment
+  const lines = code.split('\n');
+  const codeLines = [];
+  const trailingLines = [];
+
+  let foundEnd = false;
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Skip empty lines and comments at the end
+    if (!foundEnd && (trimmed === '' || trimmed.startsWith('//'))) {
+      trailingLines.unshift(line);
+      continue;
+    }
+
+    foundEnd = true;
+    codeLines.unshift(line);
+  }
+
+  // Join code lines and add .analyze() at the end
+  let codeBlock = codeLines.join('\n');
+
+  // Find the last ) and add .analyze() after it
+  const lastParen = codeBlock.lastIndexOf(')');
+  if (lastParen !== -1) {
+    codeBlock = codeBlock.slice(0, lastParen + 1) +
+                `.analyze("${analyzerId}").fft(6)` +
+                codeBlock.slice(lastParen + 1);
+  }
+
+  return codeBlock + '\n' + trailingLines.join('\n');
 }
 
 /**
@@ -92,20 +116,23 @@ export function stop() {
 }
 
 /**
- * Get the master analyser (available after init)
+ * Get the analyser for visualizations
+ * Uses superdough's built-in analyzer system
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
+  // Get the analyser from superdough
+  const analyser = getAnalyzerById(ANALYZER_ID);
+
   // Debug: periodically check if we're getting data
-  if (masterAnalyser && audioContext && audioContext.state === 'running') {
-    const testData = new Float32Array(masterAnalyser.frequencyBinCount);
-    masterAnalyser.getFloatTimeDomainData(testData);
+  if (analyser && Math.random() < 0.005) {
+    const testData = new Float32Array(analyser.frequencyBinCount);
+    analyser.getFloatTimeDomainData(testData);
     const hasSignal = testData.some(v => Math.abs(v) > 0.001);
-    if (!hasSignal && Math.random() < 0.01) {
-      console.log('[Musicman] Analyser exists but no signal detected, context state:', audioContext.state);
-    }
+    console.log('[Musicman] Analyzer check - has signal:', hasSignal, 'bins:', analyser.frequencyBinCount);
   }
-  return masterAnalyser;
+
+  return analyser;
 }
 
 /**
