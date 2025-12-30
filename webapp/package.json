@@ -9,11 +9,7 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "@strudel/core": "^1.1.0",
-    "@strudel/mini": "^1.1.0",
-    "@strudel/webaudio": "^1.1.0",
-    "@strudel/tonal": "^1.1.0",
-    "@strudel/soundfonts": "^1.1.0"
+    "@strudel/repl": "^1.1.0"
   },
   "devDependencies": {
     "vite": "^5.0.0"

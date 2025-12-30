@@ -1,15 +1,8 @@
 /**
  * Strudel Composer - Hot-reload player
- *
- * This loads and plays Strudel patterns from compositions/current.js
- * with hot-reload support for iterative composition.
  */
 
-import { repl, controls } from '@strudel/core';
-import { mini } from '@strudel/mini';
-import { webaudioOutput, initAudioOnFirstClick, registerSynthSounds, samples, getAudioContext } from '@strudel/webaudio';
-import '@strudel/tonal';
-import '@strudel/soundfonts';
+import { StrudelMirror } from '@strudel/repl';
 
 // DOM elements
 const codeDisplay = document.getElementById('code');
@@ -20,38 +13,22 @@ const reloadBtn = document.getElementById('reloadBtn');
 const errorContainer = document.getElementById('error-container');
 
 // State
-let scheduler = null;
+let strudel = null;
 let isPlaying = false;
 let currentCode = '';
 
-// Initialize audio
-initAudioOnFirstClick();
-
 async function initStrudel() {
+  if (strudel) return strudel;
+
   try {
-    // Initialize REPL with mini-notation transpiler
-    const { evaluate } = await repl({
-      defaultOutput: webaudioOutput,
-      transpiler: mini,
-      onSchedulerError: (err) => showError(err),
-      onEvalError: (err) => showError(err),
-      getTime: () => getAudioContext().currentTime,
+    strudel = new StrudelMirror({
+      defaultOutput: 'webaudio',
+      onError: (err) => showError(err),
     });
 
-    // Register built-in synth sounds
-    await registerSynthSounds();
-
-    // Load basic drum samples
-    await samples({
-      bd: 'bd/BT0A0D0.wav',
-      sd: 'sd/ST0T0S3.wav',
-      hh: 'hh/000_hh3closedhh.wav',
-      oh: 'oh/000_oh3openhh.wav',
-      cp: 'cp/HANDCLP0.wav',
-    }, 'https://strudel.cc/samples/');
-
+    await strudel.init();
     updateStatus('Ready', false);
-    return evaluate;
+    return strudel;
   } catch (err) {
     showError(err);
     return null;
@@ -60,7 +37,6 @@ async function initStrudel() {
 
 async function loadComposition() {
   try {
-    // Fetch composition with cache-busting
     const response = await fetch(`/compositions/current.js?t=${Date.now()}`);
     if (!response.ok) throw new Error('Failed to load composition');
     const code = await response.text();
@@ -77,14 +53,15 @@ async function loadComposition() {
 async function play() {
   if (isPlaying) return;
 
-  const evaluate = await initStrudel();
-  if (!evaluate) return;
+  const s = await initStrudel();
+  if (!s) return;
 
   const code = await loadComposition();
   if (!code) return;
 
   try {
-    await evaluate(code);
+    await s.evaluate(code);
+    s.start();
     isPlaying = true;
     updateStatus('Playing', true);
     playBtn.classList.add('active');
@@ -94,8 +71,8 @@ async function play() {
 }
 
 function stop() {
-  if (controls.scheduler) {
-    controls.scheduler.stop();
+  if (strudel) {
+    strudel.stop();
   }
   isPlaying = false;
   updateStatus('Stopped', false);
@@ -105,9 +82,7 @@ function stop() {
 async function reload() {
   const wasPlaying = isPlaying;
   if (wasPlaying) stop();
-
   await loadComposition();
-
   if (wasPlaying) {
     setTimeout(play, 100);
   }
@@ -148,20 +123,6 @@ document.addEventListener('keydown', (e) => {
 
 // Initial load
 loadComposition();
-
-// Hot Module Replacement (HMR) support
-if (import.meta.hot) {
-  import.meta.hot.accept();
-
-  // Watch for composition changes
-  const ws = new WebSocket(`ws://${location.host}`);
-  ws.onmessage = (event) => {
-    if (event.data.includes('current.js')) {
-      console.log('Composition changed, reloading...');
-      reload();
-    }
-  };
-}
 
 console.log('Strudel Composer initialized');
 console.log('Press Space to play/stop, Ctrl+R to reload');
