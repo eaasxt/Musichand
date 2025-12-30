@@ -6,7 +6,7 @@
 import { initStrudel, evaluate, hush, samples } from '@strudel/web';
 import {
   getAudioContext as getSuperdoughContext,
-  analysers,
+  getAnalyserById,
 } from 'superdough';
 
 let initialized = false;
@@ -121,18 +121,16 @@ export function stop() {
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
-  // Get the analyser from superdough's analysers map
-  const analyser = analysers[ANALYZER_ID];
-
-  // Debug: periodically check if we're getting data
-  if (analyser && Math.random() < 0.005) {
-    const testData = new Float32Array(analyser.frequencyBinCount);
-    analyser.getFloatTimeDomainData(testData);
-    const hasSignal = testData.some(v => Math.abs(v) > 0.001);
-    console.log('[Musicman] Analyzer check - has signal:', hasSignal, 'bins:', analyser.frequencyBinCount);
+  // Get the analyser from superdough using British spelling: getAnalyserById
+  // This function returns existing analyzer or creates one if needed
+  // Using fftSize 2048 (2^11) to match .fft(6) which gives 2^(6+5)=2048
+  try {
+    const analyser = getAnalyserById(ANALYZER_ID, 2048, 0.8);
+    return analyser;
+  } catch {
+    // Analyzer not ready yet (audio context may not be initialized)
+    return null;
   }
-
-  return analyser;
 }
 
 /**
