@@ -6,20 +6,51 @@
 import { initStrudel, evaluate, hush, samples } from '@strudel/web';
 import {
   getAudioContext as getSuperdoughContext,
-  getDestination,
-  setDestination,
+  setDefaultAudioContext,
 } from 'superdough';
 
 let initialized = false;
 
 // Master analyser that captures ALL audio output
 let masterAnalyser = null;
+let audioContext = null;
 
 /**
  * Initialize Strudel and audio analysis
  */
 export async function init() {
   if (initialized) return;
+
+  // Create our own AudioContext first
+  audioContext = new AudioContext();
+
+  // Create analyser node
+  masterAnalyser = audioContext.createAnalyser();
+  masterAnalyser.fftSize = 2048;
+  masterAnalyser.smoothingTimeConstant = 0.8;
+
+  // Connect analyser to destination (parallel listener)
+  // We'll also create a custom destination that routes through analyser
+  masterAnalyser.connect(audioContext.destination);
+
+  // Create a gain node as the "fake destination" for superdough
+  const fakeDestination = audioContext.createGain();
+  fakeDestination.connect(masterAnalyser);
+
+  // Patch the audio context's destination getter to return our fake destination
+  // This is a workaround since we can't change the real destination
+  const patchedContext = Object.create(audioContext, {
+    destination: {
+      get: () => fakeDestination,
+      enumerable: true,
+      configurable: true
+    }
+  });
+
+  // Set our patched context as superdough's default
+  setDefaultAudioContext(patchedContext);
+
+  console.log('[Musicman] Created patched AudioContext with analyser');
 
   // Initialize Strudel with sample banks loaded
   // Note: tidalcycles/Dirt-Samples uses 'master' branch, not 'main'
@@ -28,28 +59,7 @@ export async function init() {
       samples('github:tidalcycles/Dirt-Samples/master'),
   });
 
-  // Set up master analyser in the audio chain
-  // This intercepts ALL audio before it reaches the speakers
-  const ctx = getSuperdoughContext();
-  const realDestination = getDestination();
-
-  // Create our analyser node
-  masterAnalyser = ctx.createAnalyser();
-  masterAnalyser.fftSize = 2048;
-  masterAnalyser.smoothingTimeConstant = 0.8;
-
-  // Create a passthrough gain node
-  const passthrough = ctx.createGain();
-  passthrough.gain.value = 1;
-
-  // Chain: passthrough -> analyser -> real destination
-  passthrough.connect(masterAnalyser);
-  masterAnalyser.connect(realDestination);
-
-  // Tell superdough to route all audio to our passthrough
-  setDestination(passthrough);
-
-  console.log('[Musicman] Master analyser installed in audio chain');
+  console.log('[Musicman] Strudel initialized with master analyser');
 
   initialized = true;
 }
@@ -61,11 +71,9 @@ export async function init() {
 export async function play(code) {
   await init();
 
-  const ctx = getSuperdoughContext();
-
   // Resume audio context if suspended (browser autoplay policy)
-  if (ctx.state === 'suspended') {
-    await ctx.resume();
+  if (audioContext && audioContext.state === 'suspended') {
+    await audioContext.resume();
   }
 
   // Evaluate the Strudel code directly
@@ -91,11 +99,11 @@ export function getAnalyser() {
 }
 
 /**
- * Get the audio context (from superdough)
+ * Get the audio context
  * @returns {AudioContext}
  */
 export function getAudioContext() {
-  return getSuperdoughContext();
+  return audioContext || getSuperdoughContext();
 }
 
 /**
