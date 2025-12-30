@@ -61,7 +61,7 @@ export function createEditor(containerId, options = {}) {
   // Custom theme adjustments to match Musicman dark theme
   const customTheme = EditorView.theme({
     '&': {
-      height: '300px',
+      height: '100%',
       fontSize: '14px',
       backgroundColor: '#1a1a2e',
     },
@@ -164,7 +164,6 @@ setcpm(120)
 stack(
   // Drums
   s("bd*4, ~ sd ~ sd, hh*8")
-    .bank("RolandTR909")
     .gain(0.8),
 
   // Bass
@@ -175,9 +174,8 @@ stack(
     .gain(0.6),
 
   // Chords
-  chord("<Cm7 Fm7 Gm7 Cm7>")
-    .voicing()
-    .s("gm_epiano1")
+  note("<[c3,eb3,g3,bb3] [f3,ab3,c4,eb4] [g3,bb3,d4,f4] [c3,eb3,g3,bb3]>")
+    .s("triangle")
     .room(0.4)
     .gain(0.5)
     .slow(2)
