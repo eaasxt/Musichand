@@ -6,16 +6,14 @@
 import { initStrudel, evaluate, hush, samples } from '@strudel/web';
 import {
   getAudioContext as getSuperdoughContext,
-  analysers,
-  getAnalyserById,
+  getDestination,
+  setDestination,
 } from 'superdough';
 
 let initialized = false;
 
-// Single analyser ID for visualizations
-// Note: .analyze() calls don't stack - only one ID can be used per pattern
-// We use a single analyser with settings that work for both waveform and spectrum
-export const ANALYSER_ID = 1;
+// Master analyser that captures ALL audio output
+let masterAnalyser = null;
 
 /**
  * Initialize Strudel and audio analysis
@@ -30,36 +28,30 @@ export async function init() {
       samples('github:tidalcycles/Dirt-Samples/master'),
   });
 
-  // Pre-create analyser with settings good for both waveform and spectrum
-  // FFT 2048 gives good frequency resolution, smoothing 0.8 for spectrum
-  getAnalyserById(ANALYSER_ID, 2048, 0.8);
+  // Set up master analyser in the audio chain
+  // This intercepts ALL audio before it reaches the speakers
+  const ctx = getSuperdoughContext();
+  const realDestination = getDestination();
+
+  // Create our analyser node
+  masterAnalyser = ctx.createAnalyser();
+  masterAnalyser.fftSize = 2048;
+  masterAnalyser.smoothingTimeConstant = 0.8;
+
+  // Create a passthrough gain node
+  const passthrough = ctx.createGain();
+  passthrough.gain.value = 1;
+
+  // Chain: passthrough -> analyser -> real destination
+  passthrough.connect(masterAnalyser);
+  masterAnalyser.connect(realDestination);
+
+  // Tell superdough to route all audio to our passthrough
+  setDestination(passthrough);
+
+  console.log('[Musicman] Master analyser installed in audio chain');
 
   initialized = true;
-}
-
-/**
- * Wrap pattern code to include analyse for visualization
- * @param {string} code - Original Strudel code
- * @returns {string} - Modified code with analyse calls
- */
-function wrapWithAnalyse(code) {
-  // Check if code already has analyze calls
-  if (code.includes('.analyze(') || code.includes('.scope(') || code.includes('.fscope(')) {
-    return code;
-  }
-
-  // Wrap the pattern with analyze by appending to the last pattern expression
-  const trimmed = code.trimEnd();
-
-  // If code ends with a pattern (closing paren, bracket, or quote), add analyze
-  if (/[)\]"'`\d]$/.test(trimmed)) {
-    // Add analysis with fft parameter
-    // .fft(6) = 2^(6+5) = 2048 samples for good frequency resolution
-    // .analyze(id) connects audio to the analyser
-    return `${trimmed}.fft(6).analyze(${ANALYSER_ID})`;
-  }
-
-  return code;
 }
 
 /**
@@ -76,26 +68,11 @@ export async function play(code) {
     await ctx.resume();
   }
 
-  // Wrap code with analyze calls for visualization
-  const wrappedCode = wrapWithAnalyse(code);
+  // Evaluate the Strudel code directly
+  // No need to wrap with .analyze() - we use a master analyser
+  await evaluate(code);
 
-  // Debug: log the wrapped code and analyser state
-  console.log('[Musicman] Wrapped code:', wrappedCode.slice(-100));
-  console.log('[Musicman] Analysers before eval:', Object.keys(analysers));
-
-  // Evaluate the Strudel code
-  await evaluate(wrappedCode);
-
-  // Debug: check analyser state after eval
-  setTimeout(() => {
-    console.log('[Musicman] Analysers after eval:', Object.keys(analysers));
-    console.log('[Musicman] Analyser 1:', analysers[ANALYSER_ID]);
-    if (analysers[ANALYSER_ID]) {
-      const data = new Float32Array(analysers[ANALYSER_ID].frequencyBinCount);
-      analysers[ANALYSER_ID].getFloatTimeDomainData(data);
-      console.log('[Musicman] Sample data:', data.slice(0, 10));
-    }
-  }, 1000);
+  console.log('[Musicman] Pattern started, master analyser active');
 }
 
 /**
@@ -106,19 +83,11 @@ export function stop() {
 }
 
 /**
- * Get the analyser (connected after first play)
+ * Get the master analyser (available after init)
  * @returns {AnalyserNode|null}
  */
 export function getAnalyser() {
-  return analysers[ANALYSER_ID] || null;
-}
-
-/**
- * Get all analysers object (for direct access)
- * @returns {Object}
- */
-export function getAnalysers() {
-  return analysers;
+  return masterAnalyser;
 }
 
 /**

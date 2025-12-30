@@ -1,12 +1,11 @@
 /**
  * P5.js Visualization Module
  * Creates instance-mode sketches for audio visualization
- * Uses superdough's analyser system for real-time audio data
+ * Uses master analyser from strudel-player for real-time audio data
  */
 
 import p5 from 'p5';
-import { analysers, getAnalyzerData } from 'superdough';
-import { ANALYSER_ID } from './strudel-player.js';
+import { getAnalyser } from './strudel-player.js';
 
 /**
  * Create a waveform (oscilloscope) visualization
@@ -30,22 +29,13 @@ export function createWaveformViz(containerId) {
       p.strokeWeight(1);
       p.line(0, p.height / 2, p.width, p.height / 2);
 
-      // Get analyser dynamically (may not exist until audio plays)
-      const analyser = analysers[ANALYSER_ID];
-
-      // Debug logging (throttled)
-      if (p.frameCount % 60 === 0) {
-        console.log('[Viz] Waveform - analyser:', !!analyser, 'keys:', Object.keys(analysers));
-      }
+      // Get master analyser from strudel-player
+      const analyser = getAnalyser();
 
       if (analyser) {
-        // Get Float32Array data from superdough (-1 to 1 range)
-        const dataArray = getAnalyzerData('time', ANALYSER_ID);
-
-        // Debug: log sample data occasionally
-        if (p.frameCount % 60 === 0) {
-          console.log('[Viz] Waveform data sample:', dataArray?.slice(0, 5));
-        }
+        // Get time domain data directly from analyser
+        const dataArray = new Float32Array(analyser.frequencyBinCount);
+        analyser.getFloatTimeDomainData(dataArray);
 
         // Draw waveform
         p.stroke(233, 69, 96); // #e94560
@@ -101,15 +91,16 @@ export function createSpectrumViz(containerId) {
     p.draw = () => {
       p.background(20, 20, 30);
 
-      // Get analyser dynamically (may not exist until audio plays)
-      const analyser = analysers[ANALYSER_ID];
+      // Get master analyser from strudel-player
+      const analyser = getAnalyser();
 
       const barCount = 64;
       const barWidth = p.width / barCount;
 
       if (analyser) {
-        // Get Float32Array frequency data from superdough (dB values, typically -100 to 0)
-        const dataArray = getAnalyzerData('frequency', ANALYSER_ID);
+        // Get frequency data directly from analyser (dB values, typically -100 to 0)
+        const dataArray = new Float32Array(analyser.frequencyBinCount);
+        analyser.getFloatFrequencyData(dataArray);
         const binSize = Math.floor(dataArray.length / barCount);
 
         for (let i = 0; i < barCount; i++) {
@@ -189,7 +180,7 @@ export function createBeatIndicator(containerId, bpm = 120) {
       p.background(20, 20, 30);
 
       // Check if audio is actually playing by looking for analyser
-      const analyser = analysers[ANALYSER_ID];
+      const analyser = getAnalyser();
       const hasAudio = analyser && isPlaying;
 
       const steps = 16;
