@@ -16,42 +16,37 @@ let masterAnalyser = null;
 export async function init() {
   if (initialized) return;
 
-  // Initialize Strudel with sample banks loaded
-  // Note: tidalcycles/Dirt-Samples uses 'master' branch, not 'main'
-  await initStrudel({
-    prebake: () =>
-      samples('github:tidalcycles/Dirt-Samples/master'),
-  });
-
-  // Get the audio context that superdough created
+  // FIRST: Get/create audio context and install analyser BEFORE initStrudel
+  // This ensures our patch catches all audio connections including superdough's internal routing
   audioContext = getSuperdoughContext();
 
-  // Create master analyser and insert it before the destination
-  // This captures ALL audio output for visualization
+  // Create master analyser that sits between all audio and the speakers
   masterAnalyser = audioContext.createAnalyser();
   masterAnalyser.fftSize = 2048;
   masterAnalyser.smoothingTimeConstant = 0.8;
 
-  // Patch the destination to route through our analyser
-  // Save original destination
+  // Insert analyser into the audio graph by patching AudioNode.prototype.connect
+  // This intercepts ALL connections to the destination
   const originalDestination = audioContext.destination;
-
-  // Create a gain node as our new "destination" that routes through analyser
-  const interceptNode = audioContext.createGain();
-  interceptNode.connect(masterAnalyser);
+  const interceptGain = audioContext.createGain();
+  interceptGain.connect(masterAnalyser);
   masterAnalyser.connect(originalDestination);
 
-  // Monkey-patch GainNode.connect to intercept connections to destination
-  const originalConnect = GainNode.prototype.connect;
-
-  // Override connect on all GainNodes to intercept destination connections
-  GainNode.prototype.connect = function(dest, ...args) {
+  // Patch AudioNode.prototype.connect to redirect destination connections
+  const originalConnect = AudioNode.prototype.connect;
+  AudioNode.prototype.connect = function(dest, ...args) {
     if (dest === originalDestination) {
-      // Redirect to our intercept node instead
-      return originalConnect.call(this, interceptNode, ...args);
+      // Route through our analyser instead of directly to destination
+      return originalConnect.call(this, interceptGain, ...args);
     }
     return originalConnect.call(this, dest, ...args);
   };
+
+  // NOW initialize Strudel - all its audio connections will go through our analyser
+  await initStrudel({
+    prebake: () =>
+      samples('github:tidalcycles/Dirt-Samples/master'),
+  });
 
   console.log('[Musicman] Strudel initialized with master analyser');
 
