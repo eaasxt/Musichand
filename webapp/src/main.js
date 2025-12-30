@@ -5,8 +5,8 @@
  * with hot-reload support for iterative composition.
  */
 
-import { controls } from '@strudel/core';
-import { miniRepl } from '@strudel/mini';
+import { repl, controls } from '@strudel/core';
+import { mini } from '@strudel/mini';
 import { webaudioOutput, initAudioOnFirstClick, registerSynthSounds, samples, getAudioContext } from '@strudel/webaudio';
 import '@strudel/tonal';
 import '@strudel/soundfonts';
@@ -29,9 +29,10 @@ initAudioOnFirstClick();
 
 async function initStrudel() {
   try {
-    // Initialize mini REPL (includes mini-notation parser)
-    const { evaluate } = await miniRepl({
+    // Initialize REPL with mini-notation transpiler
+    const { evaluate } = await repl({
       defaultOutput: webaudioOutput,
+      transpiler: mini,
       onSchedulerError: (err) => showError(err),
       onEvalError: (err) => showError(err),
       getTime: () => getAudioContext().currentTime,
