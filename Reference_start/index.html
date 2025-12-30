@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strudel Composer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #00ff88;
+    }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #666;
+    }
+    
+    .status-dot.playing {
+      background: #00ff88;
+      animation: pulse 1s infinite;
+    }
+    
+    .status-dot.error {
+      background: #ff4444;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    button.primary {
+      background: #00ff88;
+      color: #1a1a2e;
+    }
+    
+    button.primary:hover {
+      background: #00cc6a;
+    }
+    
+    button.secondary {
+      background: #333;
+      color: #eee;
+    }
+    
+    button.secondary:hover {
+      background: #444;
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .code-display {
+      background: #0d0d1a;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+    }
+    
+    .code-display pre {
+      margin: 0;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #88ff88;
+    }
+    
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+    
+    .code-header h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #888;
+    }
+    
+    .last-updated {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    .visualizer {
+      background: #0d0d1a;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    canvas {
+      width: 100%;
+      height: 200px;
+      background: #000;
+      border-radius: 4px;
+    }
+    
+    .info-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .info-card {
+      background: #0d0d1a;
+      border-radius: 8px;
+      padding: 15px;
+    }
+    
+    .info-card h4 {
+      margin: 0 0 10px 0;
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+    }
+    
+    .info-card .value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00ff88;
+    }
+    
+    .log {
+      background: #0d0d1a;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .log-entry {
+      font-family: monospace;
+      font-size: 12px;
+      padding: 4px 0;
+      border-bottom: 1px solid #222;
+    }
+    
+    .log-entry.error {
+      color: #ff4444;
+    }
+    
+    .log-entry.info {
+      color: #888;
+    }
+    
+    .log-entry.success {
+      color: #00ff88;
+    }
+    
+    .recording-controls {
+      background: #2a1a1a;
+      border: 1px solid #ff4444;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .recording-controls.recording {
+      background: #1a2a1a;
+      border-color: #00ff88;
+    }
+    
+    .recording-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #ff4444;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎵 Strudel Composer</h1>
+      <div class="status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Ready</span>
+      </div>
+    </header>
+    
+    <div class="controls">
+      <button class="primary" id="playBtn">▶ Play</button>
+      <button class="secondary" id="stopBtn">⏹ Stop</button>
+      <button class="secondary" id="reloadBtn">🔄 Reload Code</button>
+    </div>
+    
+    <div class="recording-controls" id="recordingPanel">
+      <button class="secondary" id="recordBtn">⏺ Start Recording</button>
+      <button class="secondary" id="stopRecordBtn" disabled>⏹ Stop & Save</button>
+      <span id="recordingStatus"></span>
+    </div>
+    
+    <div class="code-display">
+      <div class="code-header">
+        <h3>compositions/current.js</h3>
+        <span class="last-updated" id="lastUpdated">Not loaded</span>
+      </div>
+      <pre id="codeContent">// Loading...</pre>
+    </div>
+    
+    <div class="visualizer">
+      <canvas id="visualizer"></canvas>
+    </div>
+    
+    <div class="info-panel">
+      <div class="info-card">
+        <h4>Cycles</h4>
+        <div class="value" id="cycleCount">0</div>
+      </div>
+      <div class="info-card">
+        <h4>Active Voices</h4>
+        <div class="value" id="voiceCount">0</div>
+      </div>
+      <div class="info-card">
+        <h4>Last Error</h4>
+        <div class="value" id="lastError" style="font-size: 0.9rem; color: #888;">None</div>
+      </div>
+    </div>
+    
+    <div class="log" id="log"></div>
+  </div>
+  
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

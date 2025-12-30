@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+.npm
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output/generated files (keep structure, ignore contents)
+output/stems/
+output/spectrograms/*.png
+output/analysis/*.json
+
+# Large files
+*.mp3
+*.wav
+*.flac
+*.m4a
+*.ogg
+
+# Models (future)
+models/*.pt
+models/*.bin
+models/*.safetensors
+
+# System
+.DS_Store
+Thumbs.db
+*.bak
+
+# Ruff cache
+.ruff_cache/
