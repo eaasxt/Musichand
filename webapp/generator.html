@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Musicman - AI Generator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Shared navigation */
+    .nav-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .logo h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: #888;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #e0e0e0;
+    }
+
+    .nav-links a.active {
+      color: #e94560;
+      border-bottom-color: #e94560;
+    }
+
+    /* Header controls */
+    header {
+      background: #16213e;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #0f3460;
+    }
+
+    .page-title {
+      font-size: 1rem;
+      color: #888;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    button {
+      background: #0f3460;
+      color: #eee;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #e94560;
+    }
+
+    button.active {
+      background: #e94560;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #status {
+      padding: 0.4rem 0.8rem;
+      background: #0f3460;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    #status.playing {
+      background: #2d6a4f;
+    }
+
+    #status.error {
+      background: #9d0208;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* AI Generation Section */
+    .generate-section {
+      background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 2px solid #e94560;
+    }
+
+    .generate-section h2 {
+      font-size: 1rem;
+      color: #e94560;
+      margin-bottom: 1rem;
+    }
+
+    .generate-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    #promptInput {
+      flex: 1;
+      background: #1a1a2e;
+      border: 1px solid #0f3460;
+      color: #eee;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: inherit;
+      border-radius: 6px;
+    }
+
+    #promptInput:focus {
+      outline: none;
+      border-color: #e94560;
+    }
+
+    #promptInput::placeholder {
+      color: #666;
+    }
+
+    #generateBtn {
+      background: #e94560;
+      min-width: 120px;
+    }
+
+    #generateBtn:hover {
+      background: #ff6b6b;
+    }
+
+    #generateBtn.loading {
+      background: #666;
+    }
+
+    .quick-prompts {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .quick-prompt {
+      background: #0f3460;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      border-radius: 20px;
+    }
+
+    #code-display {
+      background: #16213e;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #0f3460;
+      flex: 1;
+      overflow: auto;
+      min-height: 200px;
+    }
+
+    pre {
+      font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: #a8dadc;
+    }
+
+    .info {
+      background: #16213e;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .info code {
+      background: #0f3460;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .error-msg {
+      background: #9d0208;
+      color: white;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+
+    .success-msg {
+      background: #2d6a4f;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .generate-row {
+        flex-direction: column;
+      }
+
+      .controls {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav-header">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      <h1>Musicman</h1>
+    </div>
+    <div class="nav-links">
+      <a href="/">Library</a>
+      <a href="/generator.html" class="active">Generator</a>
+    </div>
+  </nav>
+
+  <header>
+    <span class="page-title">AI Music Generator</span>
+    <div class="controls">
+      <span id="status">Stopped</span>
+      <button id="playBtn">Play</button>
+      <button id="stopBtn">Stop</button>
+      <button id="reloadBtn">Reload</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- AI Generation Section -->
+    <div class="generate-section">
+      <h2>Describe your music</h2>
+      <div class="generate-row">
+        <input type="text" id="promptInput" placeholder="e.g., funky house beat with acid bassline and filtered pads">
+        <button id="generateBtn">Generate</button>
+      </div>
+      <div class="quick-prompts">
+        <button class="quick-prompt" data-prompt="four on the floor kick with hi-hats">House beat</button>
+        <button class="quick-prompt" data-prompt="acid bassline with filter sweep">Acid bass</button>
+        <button class="quick-prompt" data-prompt="ambient pad with reverb and slow filter">Ambient</button>
+        <button class="quick-prompt" data-prompt="jazz chord progression with voicings">Jazz chords</button>
+        <button class="quick-prompt" data-prompt="euclidean polyrhythm with kick and snare">Polyrhythm</button>
+        <button class="quick-prompt" data-prompt="generative melody using random notes from minor scale">Generative</button>
+      </div>
+      <div id="generate-status"></div>
+    </div>
+
+    <div id="code-display">
+      <pre id="code">// Click Generate or choose a quick prompt to create music!</pre>
+    </div>
+
+    <div class="info">
+      Describe what you want to hear, click Generate, then Play. Shortcuts: <code>Space</code> play/stop, <code>Ctrl+Enter</code> generate+play
+    </div>
+    <div id="error-container"></div>
+  </main>
+
+  <script type="module" src="/src/generator.js"></script>
+</body>
+</html>

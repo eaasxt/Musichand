@@ -52,14 +52,27 @@
       background-clip: text;
     }
 
-    .header-info {
-      color: #666;
-      font-size: 0.8rem;
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
     }
 
-    .header-info a {
-      color: #e94560;
+    .nav-links a {
+      color: #888;
       text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #e0e0e0;
+    }
+
+    .nav-links a.active {
+      color: #e94560;
+      border-bottom-color: #e94560;
     }
 
     .main-container {
@@ -311,12 +324,13 @@
 <body>
   <header>
     <div class="logo">
-      <div class="logo-icon">🎵</div>
+      <div class="logo-icon">M</div>
       <h1>Musicman</h1>
     </div>
-    <span class="header-info">
-      AI Composer powered by <a href="https://strudel.cc" target="_blank">Strudel</a>
-    </span>
+    <nav class="nav-links">
+      <a href="/" class="active">Library</a>
+      <a href="/generator.html">Generator</a>
+    </nav>
   </header>
 
   <div class="main-container">

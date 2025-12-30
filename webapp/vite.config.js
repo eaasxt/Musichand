@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
 import fs from 'fs'
 import path from 'path'
 
@@ -115,6 +116,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        generator: resolve(__dirname, 'generator.html'),
+      },
+    },
   },
   publicDir: 'public',
 })
