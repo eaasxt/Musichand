@@ -1,15 +1,12 @@
 {
-  "name": "strudel-composer-web",
+  "name": "musichand-composer",
   "version": "1.0.0",
-  "description": "Hot-reloading Strudel player for AI composition",
+  "description": "AI Music Composition with Strudel",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host"
-  },
-  "dependencies": {
-    "@strudel/repl": "^1.1.0"
   },
   "devDependencies": {
     "vite": "^5.0.0"

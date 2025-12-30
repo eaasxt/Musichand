@@ -1,0 +1,216 @@
+{
+  "model": "llama3.2",
+  "baseline": {
+    "average_score": 0.6458333333333333,
+    "passed": 7,
+    "results": [
+      {
+        "test": "A simple four-on-the-floor kick drum pattern",
+        "output": "```\ns(\"kick drum\")\nn(\"0 2 4\").scale(\"C:minor\")\nchord(\"<Cm7 G7>\").voicing()\nsine(100).lpf(200).room(50).attack(10).decay(20)\nirand(5, 80).delay(.25).attack(5).decay(15)\n```",
+        "check": {
+          "found": [],
+          "missing": [
+            "bd",
+            "*4"
+          ],
+          "score": 0.0
+        }
+      },
+      {
+        "test": "House beat with kick, snare on 2 and 4, and eighth note hi-hats",
+        "output": "```lua\n-- Create drum machine pattern\nlocal pattern = {}\npattern[1] = \"kick\"\npattern[2] = \"snr\"\npattern[3] = \"kick\"\npattern[4] = \"snr\"\n\n-- Define note lengths in samples\nlocal kick = 16\nlocal snare = 12\nlocal hi_hat = 8\n\n-- Hi hat eighth notes with room reverb\nfor i = 1, 6 do\n    table.insert(pattern, i, \"*4\")\n    local sample = s(\"bd sd\", \"kick\", \"snr\", \"bd sd\")\n    table.insert(sample, 0, n(1, 2, 5).scale(\"C:minor\").note(kick))\n    table.insert(sample, 2, n(2, 3, 4).scale(\"C:minor\").note(snare))\n    sample = s(\"bd sd\", \"kick\")\n    sample[0] = perlin()\n    table.insert(pattern, i + 1, \"*4\")\n    table.insert(pattern, i + 1, \"[8]\")\n    sample[i + 3] = sine() * 0.5\n    pattern[i + 2] = sample\nend\n\n-- Play drum machine pattern\nnote(\"C4 E4\", 60) -- kick snare hi hat on beat\nfor _, sample in ipairs(pattern) do\n    print(\"s(\", table.concat(sample, \", \"))\nend\n```",
+        "check": {
+          "found": [
+            "bd",
+            "sd"
+          ],
+          "missing": [
+            "hh"
+          ],
+          "score": 0.6666666666666666
+        }
+      },
+      {
+        "test": "C minor pentatonic melody using the scale function",
+        "output": "```perl\nn(\"0 2 4\", \"C:minor\").scale().chord(\"<Cm7 G7>\").voicing();\n```\n\nAlternatively:\n\n```perl\nn(\"0 2 4\").scale(\"C:minor\");\n```",
+        "check": {
+          "found": [
+            "scale",
+            "minor"
+          ],
+          "missing": [],
+          "score": 1.0
+        }
+      },
+      {
+        "test": "Acid bassline with filter sweep using sawtooth and lowpass filter",
+        "output": "```\n// Generate acid bass sound\nsynth(\"saw\", 0);\nosc(1).amp(0.5).route(.out);\n\n// Low-pass filter\nlpf().freq(n(60), 6.).amp(0.8);\n\n// Add noise for texture\nirand(40, 20).amp(0.4).route(.in);\nirand(100, 50).amp(0.1).route(.in);\n\n// Filter sweep\nosc(2).route(LPF).route(.out);\n\n// Sweep filter frequency over time\nn(\"0 60\").scale(\"C:minor\").range(-6 - 3.).amp(10.).route(Osc()).route(.in);\n```\n\nNote: In Strudel syntax, `n(x)` is used to represent a note, and `osc(n)` generates an oscillator with frequency n.",
+        "check": {
+          "found": [
+            "lpf"
+          ],
+          "missing": [
+            "sawtooth"
+          ],
+          "score": 0.5
+        }
+      },
+      {
+        "test": "Euclidean rhythm with 3 beats over 8 steps on kick drum",
+        "output": "```python\nimport numpy as np\n\n# Generate time array\nt = np.linspace(0, 1, 8)\n\n# Define parameters\nbeat_duration = 1/2  # Beat duration in seconds\nsubdivide = [1, 2]  # Subdivision factor (1 for no subdivision)\nspeed_up = False  # Apply speed up effect\n\n# Generate Euclidean rhythm\nrhythm = np.array([3, 3, 1, 1])\nfor i, d in enumerate(subdivide):\n    rhythm *= d\nif len(rhythm) > 0 and rhythm[-1] == 1:\n    if not speed_up:\n        t[1:4] = [t[1], t[2], t[3]]\n    else:\n        t[1:4] = [t[1]/2, t[2]/2, t[3]/2]\n\n# Generate kick drum signal\nsine_tone = np.sin(440 * t)\nirand_tone = np.random.uniform(0.5, 1.5, size=len(t))\nperlin_tone = np.interp(t, [0, 0.25, 0.5, 0.75], [0.1, 0.2, 0.3, 0.4])\n\nkick_drum_signal = sine_tone + irand_tone - perlin_tone\n\n# Play the signal\ns(kick_drum_signal)\n```",
+        "check": {
+          "found": [
+            "bd"
+          ],
+          "missing": [
+            "(3,8)"
+          ],
+          "score": 0.5
+        }
+      },
+      {
+        "test": "Jazz chord progression Dm7 G7 Cmaj7 with voicings",
+        "output": "```strudel\ns(\"bd sd\")\nnote(\"c4 e4\")\nn(\"0 2 4\").scale(\"C:minor\")\nchord(\"<Dm7G7>Cmaj7\")\n```\n\nIf you want to use voicings for the Dm7 and G7 chords, you would have to add additional code:\n\n```strudel\ns(\"bd sd\")\nnote(\"c4 e4\")\nn(\"0 2 4\").scale(\"C:minor\")\nchord(\"<Dm7G7>Cmaj7\").voicing([\n    [\"c3 g3 b3\", \"e3 a3 c5\"],\n    [\"d3 f#3 a3\", \"g#3 c4 e5\"]\n])\n```",
+        "check": {
+          "found": [
+            "chord",
+            "voicing"
+          ],
+          "missing": [],
+          "score": 1.0
+        }
+      },
+      {
+        "test": "Generative melody using random notes from a dorian scale",
+        "output": "```python\n# Generate random Dorian scale notes\ndef generate_dorian_scale(min_note=60, max_note=72):\n    scale = [\"C\", \"D\", \"E\", \"F\", \"G\", \"A\", \"B\"]\n    return [min_note + scale.index(note) for note in random.choice([\"d\", \"e\", \"f\"]) + scale]\n\n# Generate melody\ndef generate_melody(length, min_note=60, max_note=72):\n    notes = []\n    for i in range(length):\n        note = random.choice(generate_dorian_scale(min_note, max_note))\n        notes.append(note)\n    return notes\n\nimport random\nnotes = generate_melody(16)\n\n# Play melody\nfor note in notes:\n    s(note)\n```",
+        "check": {
+          "found": [
+            "scale"
+          ],
+          "missing": [
+            "irand"
+          ],
+          "score": 0.5
+        }
+      },
+      {
+        "test": "Ambient pad with long attack, reverb, and slow filter movement",
+        "output": "```\nsigEnv(s(\"bd sd\"), 0.1)\n  .lpf(2) // long attack\n  .room(0.5) // reverb\n  .delay(.5).rate(-0.7) // slow filter movement\n```",
+        "check": {
+          "found": [
+            "attack",
+            "room"
+          ],
+          "missing": [],
+          "score": 1.0
+        }
+      }
+    ]
+  },
+  "fewshot": {
+    "average_score": 0.6458333333333333,
+    "passed": 6,
+    "results": [
+      {
+        "test": "A simple four-on-the-floor kick drum pattern",
+        "output": "sound(\"<0 2 4 6> .kick()\")",
+        "check": {
+          "found": [],
+          "missing": [
+            "bd",
+            "*4"
+          ],
+          "score": 0.0
+        }
+      },
+      {
+        "test": "House beat with kick, snare on 2 and 4, and eighth note hi-hats",
+        "output": "sound(\"kick sd sd cp sd kk hh hh sd sd cp sd\", \".lpf(100).room().attack(.5).decay(.5)\").pace(4)",
+        "check": {
+          "found": [
+            "sd",
+            "hh"
+          ],
+          "missing": [
+            "bd"
+          ],
+          "score": 0.6666666666666666
+        }
+      },
+      {
+        "test": "C minor pentatonic melody using the scale function",
+        "output": "note(\"c2 <d2 e2 g2>\").scale(\"c:minor\")",
+        "check": {
+          "found": [
+            "scale",
+            "minor"
+          ],
+          "missing": [],
+          "score": 1.0
+        }
+      },
+      {
+        "test": "Acid bassline with filter sweep using sawtooth and lowpass filter",
+        "output": "```python\ns(\"bd sd\")\nn(\"0 2 4\").scale(\"C:minor\")\nchord(\"<Cm7 G7>\").voicing()\nnote(\"g1 bb1 <c2 eb2> d2\")\n.s(\"sawtooth\")\n.lpf(400).lpenv(4)\n.note(\"Eb3\", amp=1, attack=0.01, decay=0.5, sustain=0.8, release=2)\n.note(\"Gb3\", amp=1, attack=0.01, decay=0.5, sustain=0.8, release=2)\n.note(\"Ab3\", amp=1, attack=0.01, decay=0.5, sustain=0.8, release=2)\n.note(\"Bb3\", amp=1, attack=0.01, decay=0.5, sustain=0.8, release=2)\n.note(\"Db4\", amp=0.9, attack=0.01, decay=0.5, sustain=0.8, release=2).lpenv(3).lpf(200)\n.note(\"Eb4\", amp=1, attack=0.01, decay=0.5, sustain=0.8, release=2)\n.scope()\n```\n\nNote: The `.scope()` function is used to visualize the audio signal in real time.",
+        "check": {
+          "found": [
+            "sawtooth",
+            "lpf"
+          ],
+          "missing": [],
+          "score": 1.0
+        }
+      },
+      {
+        "test": "Euclidean rhythm with 3 beats over 8 steps on kick drum",
+        "output": "sound(\"{k k k k cp [0 1 2]}\", \"kick drum\")",
+        "check": {
+          "found": [],
+          "missing": [
+            "(3,8)",
+            "bd"
+          ],
+          "score": 0.0
+        }
+      },
+      {
+        "test": "Jazz chord progression Dm7 G7 Cmaj7 with voicings",
+        "output": "```\nsamples('github:eddyflux/crate')\nsetcps(.75)\nlet chords = chord(\"<Dm7 G7 Cmaj7>/4\").dict('ireal')\n\naddVoicings('jazz', {\n    ':': ['3 8 14', '0 3 13', '5 8 15'],\n    'm': ['0 2 6']\n})\nchord(\"<Dm7 G7 Cmaj7>/4\").voicing().room(100, .75)\n```",
+        "check": {
+          "found": [
+            "chord",
+            "voicing"
+          ],
+          "missing": [],
+          "score": 1.0
+        }
+      },
+      {
+        "test": "Generative melody using random notes from a dorian scale",
+        "output": "note(\"d2\",randL(12)).scale(\"d:minor\").sine().delay(.5).orbit(3)",
+        "check": {
+          "found": [
+            "scale"
+          ],
+          "missing": [
+            "irand"
+          ],
+          "score": 0.5
+        }
+      },
+      {
+        "test": "Ambient pad with long attack, reverb, and slow filter movement",
+        "output": "note(\"c3 e3 g3 b3\")\n.sine()\n.lpf(200)\n.attack(8).decay(60)\n.room(.5).rsize(4)\n\n.note(\"g3 b3\") // initial note\n.s(\"sawtooth\")\n.lpf(400)\n.lpenv(0.1) // filter movement start time\n\n// slow filter movement over 10 seconds\nfor (t=0; t<10; t++) {\n    .lpenv(t/100) // move to a new time value every 100ms\n}\n\n.s(\"sine\")",
+        "check": {
+          "found": [
+            "attack",
+            "room"
+          ],
+          "missing": [],
+          "score": 1.0
+        }
+      }
+    ]
+  },
+  "improvement": 0.0
+}

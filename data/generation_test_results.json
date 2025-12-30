@@ -1,0 +1,118 @@
+{
+  "model": "llama3.2",
+  "average_score": 0.7291666666666666,
+  "results": [
+    {
+      "description": "A simple four-on-the-floor kick drum pattern",
+      "complexity": "L1",
+      "output": "```strudel\ns(\"bd sd, hh*8\").bank(\"RolandTR909\")\n    .slow(120)\n    .setcpm(120);\n```",
+      "check": {
+        "found": [
+          "bd"
+        ],
+        "missing": [
+          "*4"
+        ],
+        "score": 0.5
+      }
+    },
+    {
+      "description": "House beat with kick, snare on 2 and 4, and eighth note hi-hats",
+      "complexity": "L2",
+      "output": "```javascript\ns(\"bd*8\")\nn(\"0 2 4\")\nn(\"7\")\nchord(\"<Cm7 Fm7 G7>\").voicing()\ns(\"hh e8*16\")\n.slow(128)\n.setcpm(120)\n```",
+      "check": {
+        "found": [
+          "bd",
+          "hh"
+        ],
+        "missing": [
+          "sd"
+        ],
+        "score": 0.6666666666666666
+      }
+    },
+    {
+      "description": "C minor pentatonic melody, 8 notes, using the scale function",
+      "complexity": "L2",
+      "output": "`s(\"c minor pentatonic 8\")`\n`n(\"0 2 4 5 7\").scale(\"C:minor\").s(\"piano\")`",
+      "check": {
+        "found": [
+          "scale",
+          "minor",
+          "pentatonic"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "description": "Acid bassline with filter sweep using sawtooth and lowpass filter",
+      "complexity": "L3",
+      "output": "`s(\"saw,lpf(200),-\")`",
+      "check": {
+        "found": [
+          "lpf"
+        ],
+        "missing": [
+          "sawtooth"
+        ],
+        "score": 0.5
+      }
+    },
+    {
+      "description": "Euclidean rhythm with 3 beats over 8 steps on kick drum",
+      "complexity": "L2",
+      "output": "`s(\"bd(3,8)\")`",
+      "check": {
+        "found": [
+          "(3,8)",
+          "bd"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "description": "Jazz chord progression: Dm7 G7 Cmaj7 with voicings",
+      "complexity": "L3",
+      "output": "```javascript\ns(\"Dm7\");\nn(\"0 2 5\").scale(\"C:minor\");\nchord(\"<Dm7 G7 Cmaj7>\").voicing();\ns(\"G7\");\nn(\"1 3 6\").scale(\"C:minor\");\nchord(\"<G7 Cmaj7 F#7>\").voicing();\ns(\"Cmaj7\");\nn(\"0 2 5\").scale(\"C:major\");\nchord(\"<Cmaj7 Am7 E7>\").voicing();\n```",
+      "check": {
+        "found": [
+          "chord",
+          "voicing"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "description": "Generative melody using random notes from a scale",
+      "complexity": "L4",
+      "output": "```javascript\ns(\"piano\")\n  .n(n.scale(\"C:minor\").random(0,12))\n  .segment(1)\n  .range(-20, 60)\n  .euclid(4,16)\n  .setcpm(120);\n```\n\nThis code will generate a melody using random notes from the C minor scale. It plays each note for one segment (beat) with a duration of `~` (rest). The tempo is set to 120 BPM and uses an Euclidean rhythm pattern.",
+      "check": {
+        "found": [
+          "scale"
+        ],
+        "missing": [
+          "irand"
+        ],
+        "score": 0.5
+      }
+    },
+    {
+      "description": "Ambient pad with long attack, reverb, and slow filter movement",
+      "complexity": "L4",
+      "output": "```javascript\ns(\"piano\")\n  .n(0)\n  .scale('C:minor')\n  .envelope()\n    .attack(4)\n    .decay(0.5)\n    .sustain(0.5)\n    .release(2)\n  .filter(sine.range(200,2000).slow(8))\n  .room(1.2)\n  .reverb(.mix(20))\n  .amp(0.6)\n  .setcpm(60);\n```",
+      "check": {
+        "found": [
+          "attack",
+          "room"
+        ],
+        "missing": [
+          "lpf"
+        ],
+        "score": 0.6666666666666666
+      }
+    }
+  ]
+}

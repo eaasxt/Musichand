@@ -1,0 +1,193 @@
+{
+  "model": "llama3.2",
+  "method": "feature_based_selection",
+  "average_score": 1.0,
+  "passed": 8,
+  "results": [
+    {
+      "test": "A simple four-on-the-floor kick drum pattern",
+      "features": [
+        "four-on-floor",
+        "kick",
+        "bd"
+      ],
+      "examples_used": [
+        "s(\"bd*4\")",
+        "s(\"bd*4\").bank(\"RolandTR808\")",
+        "s(\"bd*4\").bank(\"RolandTR909\")"
+      ],
+      "output": "s(\"bd*4\")",
+      "check": {
+        "found": [
+          "bd",
+          "*4"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "test": "House beat with kick, snare on 2 and 4, and eighth note hi-hats",
+      "features": [
+        "house",
+        "beat",
+        "kick",
+        "snare",
+        "hihat"
+      ],
+      "examples_used": [
+        "s(\"bd*4, sd*2, hh*8\")",
+        "s(\"bd*4, ~ sd ~ sd, hh*8\")",
+        "s(\"bd*4, ~ cp ~ cp, [hh hh hh hh]*2\")"
+      ],
+      "output": "s(\"bd*4, sd~2 sd~4, [hh hh hh hh]*8\")",
+      "check": {
+        "found": [
+          "bd",
+          "sd",
+          "hh"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "test": "C minor pentatonic melody using the scale function",
+      "features": [
+        "scale",
+        "pentatonic",
+        "minor"
+      ],
+      "examples_used": [
+        "n(\"0 2 4 7\").scale(\"C:minor:pentatonic\")",
+        "n(\"0 2 4 5 7\").scale(\"C:minor\")",
+        "n(irand(8)).scale(\"C:minor\").s(\"piano\")"
+      ],
+      "output": "n(\"0 2 4 7\").scale(\"C:minor:pentatonic\")",
+      "check": {
+        "found": [
+          "scale",
+          "minor"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "test": "Acid bassline with filter sweep using sawtooth and lowpass filter",
+      "features": [
+        "acid",
+        "bass",
+        "sawtooth",
+        "lpf",
+        "filter"
+      ],
+      "examples_used": [
+        "note(\"a1 a1 a2 a1\").s(\"sawtooth\").lpf(800)",
+        "note(\"c2 c2 c3 c2\").s(\"sawtooth\").lpf(sine.range(2",
+        "note(\"c2 eb2 g2 bb2\").s(\"sawtooth\").lpf(400).lpq(1"
+      ],
+      "output": "note(\"c2 eb2 g2 bb2\").s(\"sawtooth\").lpf(sine.range(200,2000).slow(4))",
+      "check": {
+        "found": [
+          "sawtooth",
+          "lpf"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "test": "Euclidean rhythm with 3 beats over 8 steps on kick drum",
+      "features": [
+        "euclidean",
+        "kick",
+        "bd"
+      ],
+      "examples_used": [
+        "s(\"bd(3,8), sd(5,8), hh(7,8)\")",
+        "s(\"bd(3,8)\")",
+        "s(\"bd(2,8)\")"
+      ],
+      "output": "s(\"bd(3,8)\")",
+      "check": {
+        "found": [
+          "(3,8)",
+          "bd"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "test": "Jazz chord progression Dm7 G7 Cmaj7 with voicings",
+      "features": [
+        "chord",
+        "voicing",
+        "jazz",
+        "251"
+      ],
+      "examples_used": [
+        "chord(\"<Dm7 G7 Cmaj7>\").voicing()",
+        "chord(\"<Cm7 Fm7 G7 Cm7>\").voicing()",
+        "chord(\"<Am F C G>\").voicing()"
+      ],
+      "output": "chord(\"<Dm7 G7 Cmaj7>\").voicing()",
+      "check": {
+        "found": [
+          "chord",
+          "voicing"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "test": "Generative melody using random notes from a dorian scale",
+      "features": [
+        "random",
+        "generative",
+        "irand",
+        "dorian"
+      ],
+      "examples_used": [
+        "n(irand(12)).scale(\"D:dorian\").s(\"sawtooth\")",
+        "n(irand(8)).scale(\"C:minor\").s(\"piano\")",
+        "n(irand(5)).scale(\"C:minor:pentatonic\").s(\"piano\")"
+      ],
+      "output": "n(irand(12)).scale(\"D:dorian\").s(\"sawtooth\")",
+      "check": {
+        "found": [
+          "irand",
+          "scale"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    },
+    {
+      "test": "Ambient pad with long attack, reverb, and slow filter movement",
+      "features": [
+        "ambient",
+        "pad",
+        "attack",
+        "room",
+        "filter"
+      ],
+      "examples_used": [
+        "note(\"c3 g3 c4\").s(\"triangle\").attack(3).release(5",
+        "note(\"c3 e3 g3\").s(\"pad\").attack(2).release(4).roo",
+        "note(\"c4 e4 g4 b4\").s(\"sine\").attack(4).decay(2).r"
+      ],
+      "output": "note(\"c4 e4 g4 b4\").s(\"pad\").attack(10).release(8).room(0.5).roomsize(2).lpf(sine.range(400,1200).slow(16)).delay(sine.range(500,1000).medium(1)).decay(20)",
+      "check": {
+        "found": [
+          "attack",
+          "room"
+        ],
+        "missing": [],
+        "score": 1.0
+      }
+    }
+  ]
+}
