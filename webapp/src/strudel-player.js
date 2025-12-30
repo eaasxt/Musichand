@@ -16,11 +16,17 @@ let masterAnalyser = null;
 export async function init() {
   if (initialized) return;
 
-  // FIRST: Get/create audio context and install analyser BEFORE initStrudel
-  // This ensures our patch catches all audio connections including superdough's internal routing
-  audioContext = getSuperdoughContext();
+  // Initialize Strudel FIRST so it creates its audio context
+  await initStrudel({
+    prebake: () =>
+      samples('github:tidalcycles/Dirt-Samples/master'),
+  });
 
-  // Create master analyser that sits between all audio and the speakers
+  // NOW get the audio context that superdough actually created and uses
+  audioContext = getSuperdoughContext();
+  console.log('[Musicman] Got audio context, state:', audioContext.state);
+
+  // Create master analyser
   masterAnalyser = audioContext.createAnalyser();
   masterAnalyser.fftSize = 2048;
   masterAnalyser.smoothingTimeConstant = 0.8;
@@ -34,25 +40,16 @@ export async function init() {
   const ourDestination = audioContext.destination;
 
   // Patch AudioNode.prototype.connect to redirect destination connections
-  // ONLY for nodes belonging to the SAME audio context (avoid cross-context errors)
   const originalConnect = AudioNode.prototype.connect;
   AudioNode.prototype.connect = function(dest, ...args) {
-    // Only intercept if destination is our audio context's destination
-    // and source node belongs to the same context
+    // Intercept connections to our destination from nodes in our context
     if (dest === ourDestination && this.context === audioContext) {
       return originalConnect.call(this, interceptGain, ...args);
     }
     return originalConnect.call(this, dest, ...args);
   };
 
-  // NOW initialize Strudel - all its audio connections will go through our analyser
-  await initStrudel({
-    prebake: () =>
-      samples('github:tidalcycles/Dirt-Samples/master'),
-  });
-
   console.log('[Musicman] Strudel initialized with master analyser');
-
   initialized = true;
 }
 
