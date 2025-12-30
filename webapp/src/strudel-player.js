@@ -49,8 +49,10 @@ function wrapWithAnalyse(code) {
 
   // If code ends with a pattern (closing paren, bracket, or quote), add analyze
   if (/[)\]"'`\d]$/.test(trimmed)) {
-    // Add analysis - single ID since .analyze() calls don't stack
-    return `${trimmed}.analyze(${ANALYSER_ID})`;
+    // Add analysis with fft parameter
+    // .fft(6) = 2^(6+5) = 2048 samples for good frequency resolution
+    // .analyze(id) connects audio to the analyser
+    return `${trimmed}.fft(6).analyze(${ANALYSER_ID})`;
   }
 
   return code;
