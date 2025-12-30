@@ -38,7 +38,7 @@ let memory = note("a4 ~ c5 ~ b4 a4 ~ g4 ~ ~ e4 ~ ~ ~ ~ ~")
   .s("sine")
   .lpf(1800)
   .attack(.1).decay(.4).sustain(.3).release(.5)
-  .vib(4:.02)
+  .vib(0.02)
   .room(.6).size(.75)
   .gain(.35)
 
